@@ -16,7 +16,7 @@ app.get("/teste", (req, res) => {
 });
 
 app.get("/getUsuarios", async (req, res) => {
-  const usuarios = await Usuario.findAll();
+    const usuarios = await Usuario.findAll({ order: [['id', 'ASC']] });
   res.json(usuarios);
 });
 
@@ -27,9 +27,21 @@ app.post("/createUsuario", async (req, res) => {
 });
 
 app.put("/atualizarUsuario/:id", async (req, res) => {
-  const { id } = req.params;
-  const { nome } = req.body;
-  const usuario = await Usuario.update({ nome }, { where: { id } });
+  try {
+    const { id } = req.params;
+    const { nome } = req.body;
+    const [updated] = await Usuario.update({ nome }, { where: { id } });
+
+    if (updated) {
+      const usuarioAtualizado = await Usuario.findByPk(id);
+      res.status(200).json(usuarioAtualizado);
+    } else {
+      res.status(404).json({ message: "Usuário não encontrado" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Erro ao atualizar usuário" });
+  }
 });
 
 app.delete("/deleteUsuarios/:id", async (req,res) => {
