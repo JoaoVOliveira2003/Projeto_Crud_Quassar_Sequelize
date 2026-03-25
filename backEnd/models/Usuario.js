@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "../config/conecta.js";
+import { conecta } from "../config/conecta.js";
 
-export const Usuario = sequelize.define('Usuario',{
+export const Usuario = conecta.define('Usuario',{
     nome:{type:DataTypes.STRING,allowNull:false}
 });
