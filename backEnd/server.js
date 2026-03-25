@@ -1,23 +1,66 @@
 import express from "express";
-import { conecta } from "./config/conecta.js";
-import { Usuario } from "./models/Usuario.js";
+import { conecta } from './config/conecta.js';
+import { Usuario } from './models/Usuario.js';
+import { Cidade } from './models/Cidade.js';
+import { Endereco } from './models/Endereco.js';
 import cors from 'cors'
+
+Usuario.hasMany(Endereco, { as: 'enderecos', foreignKey: 'id_usuario' });
+Endereco.belongsTo(Usuario, { as: 'usuario', foreignKey: 'id_usuario' });
+
+Cidade.hasMany(Endereco, { as: 'enderecos', foreignKey: 'cod_cidade' });
+Endereco.belongsTo(Cidade, { as: 'cidade', foreignKey: 'cod_cidade' });
 
 const app = express();
 
 app.use(cors())
 app.use(express.json());
 
-// cria tabela automaticamente
-await conecta.sync();
+
+app.get("/recriarBanco", async (req, res) => {
+  try {
+    await conecta.sync({ force: true });
+    res.send("Banco sincronizado com sucesso!");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Erro ao sincronizar banco.");
+  }
+});
 
 app.get("/teste", (req, res) => {
   res.json({ ok: true });
 });
 
 app.get("/getUsuarios", async (req, res) => {
-    const usuarios = await Usuario.findAll({ order: [['id', 'ASC']] });
+  const usuarios = await Usuario.findAll({ order: [['id', 'ASC']] });
   res.json(usuarios);
+});
+
+app.get("/getTodosDadosUsuario/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const usuario = await Usuario.findOne({
+      where: { id },
+      include: [
+        {
+          model: Endereco,
+          as: 'enderecos',
+          include: [
+            { model: Cidade, as: 'cidade' }
+          ]
+        }
+      ]
+    });
+    res.json(usuario);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ erro: 'Erro ao buscar usuário' });
+  }
+});
+
+app.get("/getCidades",async(req,res)=>{
+  const cidades = await Cidade.findAll();
+  res.json(cidades);
 });
 
 app.post("/createUsuario", async (req, res) => {
@@ -61,3 +104,5 @@ app.delete("/deleteUsuarios/:id", async (req,res) => {
 app.listen(3000, () => {
   console.log("Servidor rodando na porta 3000");
 });
+
+

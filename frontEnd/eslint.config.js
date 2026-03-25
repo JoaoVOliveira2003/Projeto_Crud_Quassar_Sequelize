@@ -19,6 +19,7 @@ export default defineConfigWithVueTs(
     files: ['**/*.ts', '**/*.vue'],
     rules: {
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
+      "no-unused-vars": "warn"
     },
   },
 
@@ -41,6 +42,7 @@ export default defineConfigWithVueTs(
     rules: {
       'prefer-promise-reject-errors': 'off',
       'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+          "no-unused-vars": "warn",  
     },
   },
 
