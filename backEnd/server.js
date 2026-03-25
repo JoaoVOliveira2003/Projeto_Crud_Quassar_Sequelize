@@ -1,11 +1,15 @@
 import express from "express";
 import { sequelize } from "./config/conecta.js";
 import { Usuario } from "./models/Usuario.js";
+import cors from 'cors'
 
 const app = express();
+
+app.use(cors())
 app.use(express.json());
 
-// cria tabela automaticamente
+// cria tabela automaticamentew
+
 await sequelize.sync();
 
 app.get("/teste", (req, res) => {
