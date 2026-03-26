@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { conecta } from "../config/conecta.js";
-import { Endereco } from './Endereco.js';
 
 export const Usuario = conecta.define('Usuario', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -9,3 +8,9 @@ export const Usuario = conecta.define('Usuario', {
     peso: { type: DataTypes.INTEGER, allowNull: true },
     altura: { type: DataTypes.FLOAT, allowNull: true },
 });
+
+Usuario.associate = (models) =>{
+    Usuario.hasMany(models.Endereco,{
+        foreignKey:"id_usuario"
+    });
+}

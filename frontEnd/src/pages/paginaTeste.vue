@@ -110,7 +110,7 @@
   const colunas = [
     { name: 'id', label: 'ID', field: 'id', sortable: true },
     { name: 'nome', label: 'Nome', field: 'nome', sortable: true },
-    { name: 'acoes', label: 'Ações', align: 'center' }
+    { name: 'acoes', label: 'Ações', align: '' }
   ];
 
   // Carregar usuários
