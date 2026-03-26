@@ -113,8 +113,7 @@ app.post("/createUsuarioTodosDados", async (req, res) => {
   const t = await conecta.transaction();
 
   try {
-    const { nome, dataDeNascimento, peso, altura, rua, numero, cod_cidade } =
-      req.body;
+    const { nome, dataDeNascimento, peso, altura, rua, numero, cod_cidade } =      req.body;
 
     const usuario = await Usuario.create(
       {
@@ -137,9 +136,8 @@ app.post("/createUsuarioTodosDados", async (req, res) => {
     );
 
     await t.commit();
-    res
-      .status(201)
-      .json({ mensagem: "Usuario e endereço criados", usuario, endereco });
+    res.status(201).json({ mensagem: "Usuario e endereço criados", usuario, endereco });
+
   } catch (error) {
     await t.rollback();
     console.error(error);

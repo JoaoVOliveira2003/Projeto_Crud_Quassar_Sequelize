@@ -2,13 +2,12 @@
   <div class="q-pa-md" style="max-width: 600px; margin: auto;">
 
     <q-input filled v-model="nome" label="Nome" class="bordered q-mb-sm" placeholder="Digite seu nome" clearable />
-
     <q-input filled v-model="dataDeNascimento" label="Data de Nascimento" type="date" class="bordered q-mb-sm"
       placeholder="Selecione sua data de nascimento" clearable />
 
     <div class="row q-gutter-sm">
       <div class="col">
-        <q-input filled v-model.number="peso" label="Peso (kg)" type="number" class="bordered q-mb-sm"
+        <q-input filled v-model.number="peso" label="Peso (int)" type="number" class="bordered q-mb-sm"
           placeholder="Digite seu peso" clearable />
       </div>
       <div class="col">
@@ -25,12 +24,13 @@
         <q-input filled v-model.number="numero" label="Número" type="number" placeholder="Digite o número" clearable />
       </div>
     </div>
-<br>
+    <br>
     <!-- Componente de cidade -->
     <CidadeSelect v-model="cidadeSelecionada" />
 
     <div class="q-mt-md">
-      <q-btn color="secondary" class="q-mr-sm" @click="insertUsuario">
+      <!-- <q-btn color="secondary" class="q-mr-sm" @click="insertUsuario"> -->
+      <q-btn color="secondary" class="q-mr-sm" @click="createUsuarioTodosDados">
         Gravar
       </q-btn>
     </div>
@@ -57,6 +57,14 @@
         <q-card-section>
           <div class="text-h6">Editar usuário</div>
           <q-input v-model="usuarioSelecionado.nome" label="Nome" />
+          <q-input type="date" v-model="usuarioSelecionado.dataDeNascimento" label="dataDeNascimento" />
+          <q-input type="number" v-model="usuarioSelecionado.peso" label="peso" />
+          <q-input v-model="usuarioSelecionado.altura" label="altura" />
+          <q-input v-model="usuarioSelecionado.Rua" label="Rua" type="number" />
+          <q-input v-model="usuarioSelecionado.numero" label="numero" />
+          <!-- <q-input v-model="usuarioSelecionado.cidadeSelecionada" label="cidadeSelecionada" /> -->
+          <CidadeSelect v-model="cidadeSelecionada" />
+
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" color="secondary" v-close-popup @click="modalAberto=false" />
@@ -88,7 +96,6 @@
   import axios from 'axios';
   import CidadeSelect from 'components/CidadeSelect.vue';
 
-  // Variáveis do formulário
   const nome = ref('');
   const dataDeNascimento = ref('');
   const peso = ref < number | null > (null);
@@ -97,16 +104,39 @@
   const numero = ref < number | null > (null);
   const cidadeSelecionada = ref < number | null > (null);
 
-  // Usuários e tabelas
-  interface Usuario { id: number; nome: string; }
+  interface Usuario {
+    id: number;
+    nome: string;
+    peso: number;
+    dataDeNascimento: Date;
+    altura: number;
+    rua: string;
+    cidadeSelecionada: number;
+  }
+
+  interface Endereco {
+    rua: string;
+    cidadeSelecionada: number;
+    numero: number;
+  }
+
+
   const usuarios = ref < Usuario[] > ([]);
-  const usuarioSelecionado = reactive < Usuario > ({ id: 0, nome: '' });
+
+  const usuarioSelecionado = reactive < Usuario > ({
+    id: 0,
+    nome: '',
+    peso: 0,
+    dataDeNascimento: new Date(), // inicializa com a data atual
+    altura: 0,
+    rua: '',
+    cidadeSelecionada: 0
+  });
 
   // Modais
   const modalAberto = ref(false);
   const modalDeletarAberto = ref(false);
 
-  // Colunas da tabela
   const colunas = [
     { name: 'id', label: 'ID', field: 'id', sortable: true },
     { name: 'nome', label: 'Nome', field: 'nome', sortable: true },
@@ -129,22 +159,52 @@
   }
 
   // Inserir usuário
-  async function insertUsuario() {
+  async function createUsuarioTodosDados() {
+    const lista_dados = {
+      nome: nome.value,
+      dataDeNascimento: dataDeNascimento.value,
+      peso: peso.value,
+      altura: altura.value,
+      rua: rua.value,
+      numero: numero.value,
+      cod_cidade: cidadeSelecionada.value.cod_cidade
+    };
+
     try {
-      const res = await axios.post('http://localhost:3000/createUsuario', { nome: nome.value });
-      alert('Novo usuário criado: ' + (res.data.nome || nome.value));
+      const res = await axios.post('http://localhost:3000/createUsuarioTodosDados', lista_dados, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      alert('Novo usuário criado: ' + (res.data.usuario.nome || nome.value));
+
+      // Limpar campos
       nome.value = '';
+      dataDeNascimento.value = '';
+      peso.value = '';
+      altura.value = '';
+      rua.value = '';
+      numero.value = '';
+      cidadeSelecionada.value = null;
+
       carregarUsuarios();
+
     } catch (error) {
       console.error(error);
-      alert('Erro ao criar usuário.');
+      alert('Erro ao criar usuário: ' + (error.response?.data?.erro || error.message));
     }
   }
 
   // Modais
   function abrirModalEditar(row: Usuario) {
+    console.log(row);
     usuarioSelecionado.id = row.id;
     usuarioSelecionado.nome = row.nome;
+    usuarioSelecionado.peso = row.peso;
+    usuarioSelecionado.dataDeNascimento = row.dataDeNascimento;
+    usuarioSelecionado.altura = row.altura;
+    usuarioSelecionado.rua = row.rua;
+    usuarioSelecionado.cidadeSelecionada = row.cidadeSelecionada;
+
     modalAberto.value = true;
   }
 
@@ -172,7 +232,7 @@
   // Confirmar deletar
   async function confirmarDelete() {
     try {
-      await axios.delete(`http://localhost:3000/deleteUsuarios/${usuarioSelecionado.id}`);
+      await axios.delete(`http://localhost:3000/deleteTodosDadosUsuario/${usuarioSelecionado.id}`);
       alert('Usuário apagado com sucesso!');
       usuarioSelecionado.id = 0;
       usuarioSelecionado.nome = '';
