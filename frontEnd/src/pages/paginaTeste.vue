@@ -55,20 +55,21 @@
     <q-dialog v-model="modalAberto">
       <q-card style="min-width: 350px">
         <q-card-section>
+
           <div class="text-h6">Editar usuário</div>
           <q-input v-model="usuarioSelecionado.nome" label="Nome" />
-          <q-input type="date" v-model="usuarioSelecionado.dataDeNascimento" label="dataDeNascimento" />
-          <q-input type="number" v-model="usuarioSelecionado.peso" label="peso" />
-          <q-input v-model="usuarioSelecionado.altura" label="altura" />
-          <q-input v-model="usuarioSelecionado.Rua" label="Rua" type="number" />
-          <q-input v-model="usuarioSelecionado.numero" label="numero" />
-          <!-- <q-input v-model="usuarioSelecionado.cidadeSelecionada" label="cidadeSelecionada" /> -->
-          <CidadeSelect v-model="cidadeSelecionada" />
+          <q-input type="date" v-model="usuarioSelecionado.dataDeNascimento" label="Data" />
+          <q-input type="number" v-model="usuarioSelecionado.peso" label="Peso" />
+          <q-input v-model="usuarioSelecionado.altura" label="Altura" />
 
+          <q-input v-model="usuarioSelecionado.rua" label="Rua" />
+          <q-input v-model="usuarioSelecionado.numero" label="Número" />
+
+          <CidadeSelect v-model="usuarioSelecionado.cidadeSelecionada" />
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" color="secondary" v-close-popup @click="modalAberto=false" />
-          <q-btn flat label="Salvar" color="primary" @click="salvarEdicao" />
+          <q-btn flat label="Salvar" color="primary" @click="atualizarTodosDadosUsuario" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -108,16 +109,12 @@
     id: number;
     nome: string;
     peso: number;
-    dataDeNascimento: Date;
     altura: number;
-    rua: string;
-    cidadeSelecionada: number;
-  }
+    dataDeNascimento: string;
 
-  interface Endereco {
     rua: string;
-    cidadeSelecionada: number;
     numero: number;
+    cidadeSelecionada: number;
   }
 
 
@@ -127,9 +124,11 @@
     id: 0,
     nome: '',
     peso: 0,
-    dataDeNascimento: new Date(), // inicializa com a data atual
     altura: 0,
+    dataDeNascimento: '',
+
     rua: '',
+    numero: 0,
     cidadeSelecionada: 0
   });
 
@@ -196,15 +195,15 @@
 
   // Modais
   function abrirModalEditar(row: Usuario) {
-    console.log(row);
+    const endereco = row.Enderecos?.[0];
     usuarioSelecionado.id = row.id;
     usuarioSelecionado.nome = row.nome;
     usuarioSelecionado.peso = row.peso;
-    usuarioSelecionado.dataDeNascimento = row.dataDeNascimento;
     usuarioSelecionado.altura = row.altura;
-    usuarioSelecionado.rua = row.rua;
-    usuarioSelecionado.cidadeSelecionada = row.cidadeSelecionada;
-
+    usuarioSelecionado.dataDeNascimento = row.dataDeNascimento ? row.dataDeNascimento.split('T')[0] : '';
+    usuarioSelecionado.rua = endereco?.rua || '';
+    usuarioSelecionado.numero = endereco?.numero || 0;
+    usuarioSelecionado.cidadeSelecionada = endereco?.cod_cidade || 0;
     modalAberto.value = true;
   }
 
@@ -212,21 +211,6 @@
     usuarioSelecionado.id = row.id;
     usuarioSelecionado.nome = row.nome;
     modalDeletarAberto.value = true;
-  }
-
-  // Salvar edição
-  async function salvarEdicao() {
-    try {
-      await axios.put(`http://localhost:3000/atualizarUsuario/${usuarioSelecionado.id}`, { nome: usuarioSelecionado.nome });
-      alert('Usuário atualizado com sucesso!');
-      modalAberto.value = false;
-      usuarioSelecionado.id = 0;
-      usuarioSelecionado.nome = '';
-      carregarUsuarios();
-    } catch (error) {
-      console.error(error);
-      alert('Erro ao atualizar usuário.');
-    }
   }
 
   // Confirmar deletar
@@ -244,6 +228,64 @@
       modalDeletarAberto.value = false;
     }
   }
+
+  async function atualizarTodosDadosUsuario() {
+    const dados = {
+      nome: usuarioSelecionado.nome,
+      dataDeNascimento: usuarioSelecionado.dataDeNascimento,
+      peso: usuarioSelecionado.peso,
+      altura: usuarioSelecionado.altura,
+      rua: usuarioSelecionado.rua,
+      numero: usuarioSelecionado.numero,
+      cod_cidade: usuarioSelecionado.cidadeSelecionada, // 👈 corrigi
+    };
+
+
+    try {
+
+      await axios.put(
+        `http://localhost:3000/atualizarTodosDadosUsuario/${usuarioSelecionado.id}`,
+        dados
+      );
+
+
+      alert("Dados de usuario atualizado com sucesso");
+      modalAberto.value = false;
+      usuarioSelecionado.id = 0;
+      usuarioSelecionado.nome = '';
+      usuarioSelecionado.dataDeNascimento = '';
+      usuarioSelecionado.peso = 0;
+      usuarioSelecionado.altura = 0;
+      usuarioSelecionado.rua = '';
+      usuarioSelecionado.numero = 0;
+      usuarioSelecionado.cidadeSelecionada = 0;
+
+
+      carregarUsuarios();
+    }
+    catch (error) {
+      console.log(error);
+      alert('erro ao atualizar');
+    }
+  }
+
+  // Salvar edição
+  /*
+    async function salvarEdicao() {
+      try {
+        await axios.put(`http://localhost:3000/atualizarUsuario/${usuarioSelecionado.id}`, { nome: usuarioSelecionado.nome });
+        alert('Usuário atualizado com sucesso!');
+        modalAberto.value = false;
+        usuarioSelecionado.id = 0;
+        usuarioSelecionado.nome = '';
+        carregarUsuarios();
+      } catch (error) {
+        console.error(error);
+        alert('Erro ao atualizar usuário.');
+      }
+    }
+  
+  */
 </script>
 
 <style scoped>

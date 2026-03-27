@@ -36,17 +36,17 @@
 
   const linksList: EssentialLinkProps[] = [
     {
-      title: 'Pagina inicial',
-      caption: 'chegar a tela inicial',
+      title: 'Tabela de Crud',
+      caption: 'Crud completo',
       icon: 'school',
       link: '',
     },
-    {
-      title: 'teste',
-      caption: 'github.com/quasarframework',
-      icon: 'record_voice_over',
-      link: '#/teste',
-    },
+    // {
+    //   title: 'teste',
+    //   caption: 'github.com/quasarframework',
+    //   icon: 'record_voice_over',
+    //   link: '#/teste',
+    // },
 
   ];
 
