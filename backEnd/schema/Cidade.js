@@ -18,3 +18,13 @@ Cidade.associate = (models) =>{
     foreignKey:"cod_cidade"
   })
 }
+
+Cidade.buscarComEnderecos = async function () {
+  return await Cidade.findAll({
+    include: [{ model: Endereco }],
+  });
+};
+
+// export class CidadeFunctions{
+    
+// }

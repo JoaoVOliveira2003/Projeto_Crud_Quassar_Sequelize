@@ -10,7 +10,7 @@ export const Endereco = conecta.define('Endereco', {
 });
 
 Endereco.associate = (models) =>{
-  Endereco.belongsTo(models.Usuario,{
+  Endereco.belongsTo(models.UsuarioSchema,{
     foreignKey:"id_usuario"
   });
 

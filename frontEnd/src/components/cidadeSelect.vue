@@ -33,11 +33,12 @@ watch(() => props.modelValue, val => {
 });
 
 onMounted(async () => {
-  try {
-    const res = await axios.get('http://localhost:3000/getCidades');
-    cidades.value = res.data;
-  } catch (error) {
-    alert('Erro ao carregar cidades: ' + error);
-  }
+  await axios.get('')
+  // try {
+  //   const res = await axios.get('http://localhost:3000/getCidades');
+  //   cidades.value = res.data;
+  // } catch (error) {
+  //   alert('Erro ao carregar cidades: ' + error);
+  // }
 });
 </script>

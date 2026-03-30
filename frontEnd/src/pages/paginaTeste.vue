@@ -117,7 +117,6 @@
     cidadeSelecionada: number;
   }
 
-
   const usuarios = ref < Usuario[] > ([]);
 
   const usuarioSelecionado = reactive < Usuario > ({
