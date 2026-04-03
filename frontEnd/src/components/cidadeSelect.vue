@@ -1,44 +1,39 @@
 <template>
-<q-select
-  class="q-mt-5 q-mb-5"
-  filled
-  :options="cidades"
-  v-model="internalValue"
-  label="Selecione cidade"
-  option-label="desc_cidade"
-  option-value="cod_cidade"
-  @update:model-value="val => emits('update:modelValue', val)"
-/>
+  <q-select class="q-mt-5 q-mb-5" filled :options="cidades" v-model="internalValue" label="Selecione cidade"
+    option-label="desc_cidade" option-value="cod_cidade" emit-value map-options />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, defineProps, defineEmits, watch } from 'vue';
-import axios from 'axios';
+  import { ref, onMounted, watch } from 'vue'
+  import { listarCidadeService } from '../../services/Cidades/listarCidadeService'
 
-interface Cidade {
-  cod_cidade: number;
-  desc_cidade: string;
-}
+  interface Cidade {
+    cod_cidade: number
+    desc_cidade: string
+  }
 
-const props = defineProps({
-  modelValue: { type: Number, default: null }
-});
+  const props = defineProps < {
+    modelValue: number | null
+  } > ()
 
-const emits = defineEmits(['update:modelValue']);
-const cidades = ref<Cidade[]>([]);
-const internalValue = ref(props.modelValue);
+  const emit = defineEmits < {
+  (_e: 'update:modelValue', _value: number | null): void
+}> ()
 
-watch(() => props.modelValue, val => {
-  internalValue.value = val;
-});
+  const cidades = ref < Cidade[] > ([])
+  const internalValue = ref < number | null > (props.modelValue)
 
-onMounted(async () => {
-  await axios.get('')
-  // try {
-  //   const res = await axios.get('http://localhost:3000/getCidades');
-  //   cidades.value = res.data;
-  // } catch (error) {
-  //   alert('Erro ao carregar cidades: ' + error);
-  // }
-});
+  // sincroniza de fora → dentro
+  watch(() => props.modelValue, (val) => {
+    internalValue.value = val
+  })
+
+  // sincroniza de dentro → fora
+  watch(internalValue, (val) => {
+    emit('update:modelValue', val)
+  })
+
+  onMounted(async () => {
+    cidades.value = await listarCidadeService()
+  })
 </script>

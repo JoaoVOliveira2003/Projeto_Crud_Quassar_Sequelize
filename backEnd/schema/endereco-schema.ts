@@ -1,31 +1,61 @@
 import { DataTypes } from "sequelize";
 import { conecta } from "../config/conecta.js";
 
-export const EnderecoSchema = conecta.define('Endereco', {
+export const EnderecoSchema = conecta.define("Endereco", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   rua: { type: DataTypes.STRING, allowNull: false },
   numero: { type: DataTypes.INTEGER, allowNull: false },
   cod_cidade: { type: DataTypes.INTEGER, allowNull: false },
-  id_usuario: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'usuario', key: 'id' } },
+  id_usuario: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: { model: "usuario", key: "id" },
+  },
 });
 
-export class EnderecoQuery {
-  schema() {return EnderecoSchema}
+EnderecoSchema.associate = function (schema) {
+  this.belongsTo(schema.UsuarioSchema, {
+    foreignKey: "id_usuario",
+  });
 
-  async getTodasCidades(){
+  this.belongsTo(schema.CidadeSchema, {
+    foreignKey: "cod_cidade",
+    as: "cidade",
+  });
+};
+
+export class EnderecoQuery {
+  schema() {
+    return EnderecoSchema;
+  }
+
+  async getTodasCidades() {
     return await EnderecoSchema.findAll();
   }
 
   async criarEndereco(endereco) {
-      const t = await conecta.transaction();
-      try {
-  
-        return await EnderecoSchema.create(
-          endereco,
-          { transaction: t },
-        );
-      } catch (error) {}
+    try {
+      return await EnderecoSchema.create(endereco);
+    } catch (error) {
+      throw error;
     }
+  }
 
+  async deletarEndereco(id) {
+    try {
+      return EnderecoSchema.destroy({ where: { id } });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+async atualizarEndereco(id_usuario, usuario) {
+  try {
+    const [linhasAfetadas] = await EnderecoSchema.update(usuario, { where: { id_usuario: id_usuario }});
+    return linhasAfetadas;
+  } catch (error) {
+    throw error;
+  }
+}
 
 }

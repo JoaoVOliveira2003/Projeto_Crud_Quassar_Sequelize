@@ -1,39 +1,66 @@
 <template>
   <div class="q-pa-md" style="max-width: 600px; margin: auto;">
+    <!-- FORMULÁRIO PRINCIPAL -->
+    <q-form ref="formRef" greedy @submit.prevent="createUsuarioTodosDados">
 
-    <q-input filled v-model="nome" label="Nome" class="bordered q-mb-sm" placeholder="Digite seu nome" clearable />
-    <q-input filled v-model="dataDeNascimento" label="Data de Nascimento" type="date" class="bordered q-mb-sm"
-      placeholder="Selecione sua data de nascimento" clearable />
+      <!-- Nome -->
+      <q-input filled v-model="formularioPrincipal.nome" label="Nome" class="bordered q-mb-sm"
+        placeholder="Digite seu nome" clearable hide-bottom-space :rules="[
+          val => !!val || 'Nome é obrigatório',
+          val => val.length >= 3 || 'Nome deve ter pelo menos 3 caracteres'
+        ]" />
 
-    <div class="row q-gutter-sm">
-      <div class="col">
-        <q-input filled v-model.number="peso" label="Peso (int)" type="number" class="bordered q-mb-sm"
-          placeholder="Digite seu peso" clearable />
-      </div>
-      <div class="col">
-        <q-input filled v-model.number="altura" label="Altura (m)" type="number" class="bordered q-mb-sm"
-          placeholder="Digite sua altura" clearable />
-      </div>
-    </div>
+      <!-- Data -->
+      <q-input filled v-model="formularioPrincipal.dataDeNascimento" label="Data de Nascimento" type="date"
+        class="bordered q-mb-sm" clearable hide-bottom-space :rules="[ val => !!val || 'Data é obrigatória' ]" />
 
-    <div class="row q-gutter-sm">
-      <div class="col">
-        <q-input filled v-model="rua" label="Rua" placeholder="Digite sua rua" clearable />
-      </div>
-      <div class="col">
-        <q-input filled v-model.number="numero" label="Número" type="number" placeholder="Digite o número" clearable />
-      </div>
-    </div>
-    <br>
-    <!-- Componente de cidade -->
-    <CidadeSelect v-model="cidadeSelecionada" />
+      <div class="row q-gutter-sm">
+        <!-- Peso -->
+        <div class="col">
+          <q-input filled v-model.number="formularioPrincipal.peso" label="Peso (kg)" type="number"
+            class="bordered q-mb-sm" clearable hide-bottom-space @keypress="limparCampoPeso" :rules="[
+              val => val !== null || 'Peso é obrigatório',
+              val => val > 0 || 'Peso deve ser maior que 0',
+              val => val < 500 || 'Peso inválido'
+            ]" />
+        </div>
 
-    <div class="q-mt-md">
-      <!-- <q-btn color="secondary" class="q-mr-sm" @click="insertUsuario"> -->
-      <q-btn color="secondary" class="q-mr-sm" @click="createUsuarioTodosDados">
-        Gravar
-      </q-btn>
-    </div>
+        <!-- Altura -->
+        <div class="col">
+          <q-input filled v-model.number="formularioPrincipal.altura" label="Altura (m)" type="number" step="0.01"
+            class="bordered q-mb-sm" clearable hide-bottom-space :rules="[
+              val => val !== null || 'Altura é obrigatória',
+              val => val > 0 || 'Altura deve ser maior que 0',
+              val => val < 3 || 'Altura inválida'
+            ]" />
+        </div>
+      </div>
+
+      <div class="row q-gutter-sm">
+        <!-- Rua -->
+        <div class="col">
+          <q-input filled v-model="formularioPrincipal.rua" label="Rua" placeholder="Digite sua rua" clearable
+            hide-bottom-space :rules="[ val => !!val || 'Rua é obrigatória' ]" />
+        </div>
+
+        <!-- Número -->
+        <div class="col">
+          <q-input filled v-model.number="formularioPrincipal.numero" label="Número" type="number" clearable
+            hide-bottom-space
+            :rules="[ val => val !== null || 'Número é obrigatório', val => val > 0 || 'Número inválido' ]" />
+        </div>
+      </div>
+
+      <br>
+
+      <!-- Cidade -->
+      <CidadeSelect v-model="formularioPrincipal.cidadeSelecionada" />
+
+      <div class="q-mt-md">
+        <q-btn color="secondary" label="Gravar" type="submit" />
+      </div>
+
+    </q-form>
 
     <hr />
 
@@ -52,88 +79,60 @@
     </q-table>
 
     <!-- Modal de edição -->
-    <q-dialog v-model="modalAberto">
-      <q-card style="min-width: 350px">
-        <q-card-section>
+    <ModalEditar v-model:modeloAberto="modalAberto" :usuario="usuarioParaEditar" @salvar="atualizarUsuario" />
 
-          <div class="text-h6">Editar usuário</div>
-          <q-input v-model="usuarioSelecionado.nome" label="Nome" />
-          <q-input type="date" v-model="usuarioSelecionado.dataDeNascimento" label="Data" />
-          <q-input type="number" v-model="usuarioSelecionado.peso" label="Peso" />
-          <q-input v-model="usuarioSelecionado.altura" label="Altura" />
-
-          <q-input v-model="usuarioSelecionado.rua" label="Rua" />
-          <q-input v-model="usuarioSelecionado.numero" label="Número" />
-
-          <CidadeSelect v-model="usuarioSelecionado.cidadeSelecionada" />
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="secondary" v-close-popup @click="modalAberto=false" />
-          <q-btn flat label="Salvar" color="primary" @click="atualizarTodosDadosUsuario" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
 
     <!-- Modal de deletar -->
-    <q-dialog v-model="modalDeletarAberto">
-      <q-card style="min-width: 300px">
-        <q-card-section class="text-center">
-          <div class="text-h6">
-            Tem certeza que quer deletar "{{ usuarioSelecionado.nome }}"?
-          </div>
-        </q-card-section>
-        <q-card-actions align="center">
-          <q-btn flat label="Cancelar" color="secondary" v-close-popup @click="modalDeletarAberto=false" />
-          <q-btn flat label="Deletar" color="negative" @click="confirmarDelete" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <ModalDeletar v-model:modeloAberto="modalDeletarAberto" :usuario="usuarioParaDeletar"
+      @confirmarDelete="confirmarDelete" />
+
 
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, onMounted } from 'vue';
-  import axios from 'axios';
+  import ModalDeletar from 'components/ModalDeletar.vue';
+  import ModalEditar from 'components/ModalEditar.vue';
   import CidadeSelect from 'components/CidadeSelect.vue';
 
-  const nome = ref('');
-  const dataDeNascimento = ref('');
-  const peso = ref < number | null > (null);
-  const altura = ref < number | null > (null);
-  const rua = ref('');
-  const numero = ref < number | null > (null);
-  const cidadeSelecionada = ref < number | null > (null);
+  import { carregarUsuarios } from '../../services/Usuarios/listarUsuarioService';
+  import { criarUsuario } from '../../services/Usuarios/criarUsuarioService';
+  import { atualizarUsuarioService } from '../../services/Usuarios/atualizarUsuarioService';
+  import { deletarUsuario } from '../../services/Usuarios/deletarUsuarioService';
 
-  interface Usuario {
+  import { ref, reactive, onMounted } from 'vue';
+
+  const formRef = ref();
+  const usuarioParaEditar = ref < Usuario | null > (null);
+
+  const usuarios = ref < Usuario[] > ([]);
+  const usuarioParaDeletar = ref < Usuario | null > (null);
+
+  const modalAberto = ref(false);
+  const modalDeletarAberto = ref(false);
+
+  interface DadosUsuario {
     id: number;
     nome: string;
     peso: number;
     altura: number;
     dataDeNascimento: string;
-
-    rua: string;
-    numero: number;
-    cidadeSelecionada: number;
+    endereco?: Array<{
+      rua: string;
+      numero: number;
+      cod_cidade: number;
+    }>;
   }
 
-  const usuarios = ref < Usuario[] > ([]);
-
-  const usuarioSelecionado = reactive < Usuario > ({
-    id: 0,
+  const formularioPrincipal = reactive({
     nome: '',
-    peso: 0,
-    altura: 0,
     dataDeNascimento: '',
-
+    peso: null as number | null,
+    altura: null as number | null,
     rua: '',
-    numero: 0,
-    cidadeSelecionada: 0
+    numero: null as number | null,
+    cidadeSelecionada: null as number | null
   });
-
-  // Modais
-  const modalAberto = ref(false);
-  const modalDeletarAberto = ref(false);
 
   const colunas = [
     { name: 'id', label: 'ID', field: 'id', sortable: true },
@@ -141,155 +140,144 @@
     { name: 'acoes', label: 'Ações', align: '' }
   ];
 
-  // Carregar usuários
-  onMounted(() => {
-    carregarUsuarios();
+  onMounted(async () => {
+    usuarios.value = await carregarUsuarios();
   });
 
-  async function carregarUsuarios() {
-    try {
-      const res = await axios.get('http://localhost:3000/getUsuarios');
-      usuarios.value = res.data;
-    } catch (error) {
-      console.error(error);
-      alert('Erro ao carregar usuários.');
-    }
-  }
-
-  // Inserir usuário
   async function createUsuarioTodosDados() {
-    const lista_dados = {
-      nome: nome.value,
-      dataDeNascimento: dataDeNascimento.value,
-      peso: peso.value,
-      altura: altura.value,
-      rua: rua.value,
-      numero: numero.value,
-      cod_cidade: cidadeSelecionada.value.cod_cidade
+    const isFormValid = await formRef.value.validate();
+
+    if (!isFormValid) {
+      alert('Por favor, preencha todos os campos corretamente.');
+      return;
+    }
+
+    if (!formularioPrincipal.cidadeSelecionada) {
+      alert('Por favor, selecione uma cidade.');
+      return;
+    }
+
+    const usuario = {
+      nome: formularioPrincipal.nome,
+      dataDeNascimento: formularioPrincipal.dataDeNascimento,
+      peso: formularioPrincipal.peso,
+      altura: formularioPrincipal.altura,
+      endereco: {
+        rua: formularioPrincipal.rua,
+        numero: formularioPrincipal.numero,
+        cod_cidade: formularioPrincipal.cidadeSelecionada
+      }
     };
 
     try {
-      const res = await axios.post('http://localhost:3000/createUsuarioTodosDados', lista_dados, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      alert('Novo usuário criado: ' + (res.data.usuario.nome || nome.value));
-
-      // Limpar campos
-      nome.value = '';
-      dataDeNascimento.value = '';
-      peso.value = '';
-      altura.value = '';
-      rua.value = '';
-      numero.value = '';
-      cidadeSelecionada.value = null;
-
-      carregarUsuarios();
-
+      const res = await criarUsuario(usuario);
+      await atualizarFormulario();
+      alert('Novo usuário criado: ' + (res.nome || formularioPrincipal.nome));
+      limparFormularioPrincipal();
     } catch (error) {
-      console.error(error);
-      alert('Erro ao criar usuário: ' + (error.response?.data?.erro || error.message));
+      alert('Erro ao criar usuário: ' + error);
     }
   }
 
-  // Modais
+  function limparFormularioPrincipal() {
+    formularioPrincipal.nome = '';
+    formularioPrincipal.dataDeNascimento = '';
+    formularioPrincipal.peso = null;
+    formularioPrincipal.altura = null;
+    formularioPrincipal.rua = '';
+    formularioPrincipal.numero = null;
+    formularioPrincipal.cidadeSelecionada = null;
+    if (formRef.value) {
+      formRef.value.resetValidation();
+    }
+
+  }
+
+  // No Usuarios.vue
+  async function atualizarUsuario(dados) {
+
+    let dadosCorretos: DadosUsuario;
+
+    if (dados.endereco) {
+      dadosCorretos = dados;
+    } else {
+      dadosCorretos = {
+        id: dados.id,
+        nome: dados.nome,
+        dataDeNascimento: dados.dataDeNascimento,
+        peso: dados.peso,
+        altura: dados.altura,
+        endereco: {
+          rua: dados.rua,
+          numero: dados.numero,
+          cod_cidade: dados.cidadeSelecionada
+        }
+      };
+    }
+
+    try {
+      await atualizarUsuarioService(dadosCorretos);
+      modalAberto.value = false;
+      await atualizarFormulario();
+      alert('Usuário atualizado com sucesso');
+      usuarioParaEditar.value = null;
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao atualizar usuário');
+    }
+  }
+
+
+
+
+  async function atualizarFormulario() {
+    usuarios.value = await carregarUsuarios();
+  }
+
+  async function confirmarDelete() {
+    if (!usuarioParaDeletar.value) return;
+
+    try {
+      await deletarUsuario(usuarioParaDeletar.value.id);
+      await atualizarFormulario();
+      modalDeletarAberto.value = false;
+      alert('Usuário deletado com sucesso');
+      usuarioParaDeletar.value = null;
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao deletar usuário');
+    }
+  }
+
   function abrirModalEditar(row: Usuario) {
-    const endereco = row.Enderecos?.[0];
-    usuarioSelecionado.id = row.id;
-    usuarioSelecionado.nome = row.nome;
-    usuarioSelecionado.peso = row.peso;
-    usuarioSelecionado.altura = row.altura;
-    usuarioSelecionado.dataDeNascimento = row.dataDeNascimento ? row.dataDeNascimento.split('T')[0] : '';
-    usuarioSelecionado.rua = endereco?.rua || '';
-    usuarioSelecionado.numero = endereco?.numero || 0;
-    usuarioSelecionado.cidadeSelecionada = endereco?.cod_cidade || 0;
+    usuarioParaEditar.value = row;  // APENAS ISSO!
     modalAberto.value = true;
   }
 
+
   function abrirModalDeletar(row: Usuario) {
-    usuarioSelecionado.id = row.id;
-    usuarioSelecionado.nome = row.nome;
+    usuarioParaDeletar.value = row;
     modalDeletarAberto.value = true;
   }
 
-  // Confirmar deletar
-  async function confirmarDelete() {
-    try {
-      await axios.delete(`http://localhost:3000/deleteTodosDadosUsuario/${usuarioSelecionado.id}`);
-      alert('Usuário apagado com sucesso!');
-      usuarioSelecionado.id = 0;
-      usuarioSelecionado.nome = '';
-      modalDeletarAberto.value = false;
-      carregarUsuarios();
-    } catch (error) {
-      console.error(error);
-      alert('Erro ao deletar usuário.');
-      modalDeletarAberto.value = false;
-    }
+  function limparCampoPeso(event: KeyboardEvent) {
+    if (event.key === ',' || event.key === '.' || !/[0-9]/.test(event.key)) event.preventDefault();
   }
 
-  async function atualizarTodosDadosUsuario() {
-    const dados = {
-      nome: usuarioSelecionado.nome,
-      dataDeNascimento: usuarioSelecionado.dataDeNascimento,
-      peso: usuarioSelecionado.peso,
-      altura: usuarioSelecionado.altura,
-      rua: usuarioSelecionado.rua,
-      numero: usuarioSelecionado.numero,
-      cod_cidade: usuarioSelecionado.cidadeSelecionada, // 👈 corrigi
-    };
-
-
-    try {
-
-      await axios.put(
-        `http://localhost:3000/atualizarTodosDadosUsuario/${usuarioSelecionado.id}`,
-        dados
-      );
-
-
-      alert("Dados de usuario atualizado com sucesso");
-      modalAberto.value = false;
-      usuarioSelecionado.id = 0;
-      usuarioSelecionado.nome = '';
-      usuarioSelecionado.dataDeNascimento = '';
-      usuarioSelecionado.peso = 0;
-      usuarioSelecionado.altura = 0;
-      usuarioSelecionado.rua = '';
-      usuarioSelecionado.numero = 0;
-      usuarioSelecionado.cidadeSelecionada = 0;
-
-
-      carregarUsuarios();
-    }
-    catch (error) {
-      console.log(error);
-      alert('erro ao atualizar');
-    }
+  // Interface para o tipo Usuario (ajuste conforme sua necessidade)
+  interface Usuario {
+    id: number;
+    nome: string;
+    peso: number;
+    altura: number;
+    dataDeNascimento: string;
+    rua?: string;
+    numero?: number;
+    cidadeSelecionada?: number;
+    endereco?: Array<{
+      rua: string;
+      numero: number;
+      cod_cidade: number;
+    }>;
   }
-
-  // Salvar edição
-  /*
-    async function salvarEdicao() {
-      try {
-        await axios.put(`http://localhost:3000/atualizarUsuario/${usuarioSelecionado.id}`, { nome: usuarioSelecionado.nome });
-        alert('Usuário atualizado com sucesso!');
-        modalAberto.value = false;
-        usuarioSelecionado.id = 0;
-        usuarioSelecionado.nome = '';
-        carregarUsuarios();
-      } catch (error) {
-        console.error(error);
-        alert('Erro ao atualizar usuário.');
-      }
-    }
-  
-  */
 </script>
-
-<style scoped>
-  .bordered {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-</style>
