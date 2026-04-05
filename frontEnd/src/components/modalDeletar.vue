@@ -18,29 +18,7 @@
 <script setup lang="ts">
   import { computed } from 'vue'
 
-  // Props
-  const props = defineProps < {
-    modeloAberto: boolean
-  usuario?: Usuario | null
-  } > ()
-
-  // Emits
-const emit = defineEmits<{
-  (_e: 'update:modeloAberto', _value: boolean): void
-  (_e: 'confirmarDelete'): void
-}>()
-
-  // 🔥 Aqui está o pulo do gato (substitui ref + watch)
-  const model = computed({
-    get: () => props.modeloAberto,
-    set: (val) => emit('update:modeloAberto', val)
-  })
-
-  function confirmarDelete() {
-    emit('confirmarDelete')
-  }
-
-  // Interface
+  // Interface primeiro
   interface Usuario {
     id: number
     nome: string
@@ -52,5 +30,26 @@ const emit = defineEmits<{
       numero: number
       cod_cidade: number
     }>
+  }
+
+  // Props
+  const props = defineProps<{
+    modeloAberto: boolean
+    usuario?: Usuario | null
+  }>()
+
+  // Emits (sintaxe corrigida - sem _e e _value)
+  const emit = defineEmits<{
+    'update:modeloAberto': [value: boolean]
+    'confirmarDelete': []
+  }>()
+
+  const model = computed({
+    get: () => props.modeloAberto,
+    set: (val) => emit('update:modeloAberto', val)
+  })
+
+  function confirmarDelete() {
+    emit('confirmarDelete')
   }
 </script>

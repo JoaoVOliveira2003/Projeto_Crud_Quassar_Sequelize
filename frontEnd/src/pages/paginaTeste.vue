@@ -8,16 +8,16 @@
         placeholder="Digite seu nome" clearable hide-bottom-space :rules="[
           val => !!val || 'Nome é obrigatório',
           val => val.length >= 3 || 'Nome deve ter pelo menos 3 caracteres'
-        ]" />
+        ]" lazy-rules />
 
       <!-- Data -->
-      <q-input filled v-model="formularioPrincipal.dataDeNascimento" label="Data de Nascimento" type="date"
-        class="bordered q-mb-sm" clearable hide-bottom-space :rules="[ val => !!val || 'Data é obrigatória' ]" />
+      <q-input lazy-rules filled v-model="formularioPrincipal.dataDeNascimento" label="Data de Nascimento" type="date"
+        class="bordered q-mb-sm" clearable hide-bottom-space :rules="[ val => !!val || 'Data é obrigatória' ] " />
 
       <div class="row q-gutter-sm">
         <!-- Peso -->
         <div class="col">
-          <q-input filled v-model.number="formularioPrincipal.peso" label="Peso (kg)" type="number"
+          <q-input lazy-rules filled v-model.number="formularioPrincipal.peso" label="Peso (kg)" type="number"
             class="bordered q-mb-sm" clearable hide-bottom-space @keypress="limparCampoPeso" :rules="[
               val => val !== null || 'Peso é obrigatório',
               val => val > 0 || 'Peso deve ser maior que 0',
@@ -27,8 +27,8 @@
 
         <!-- Altura -->
         <div class="col">
-          <q-input filled v-model.number="formularioPrincipal.altura" label="Altura (m)" type="number" step="0.01"
-            class="bordered q-mb-sm" clearable hide-bottom-space :rules="[
+          <q-input lazy-rules filled v-model.number="formularioPrincipal.altura" label="Altura (m)" type="number"
+            step="0.01" class="bordered q-mb-sm" clearable hide-bottom-space :rules="[
               val => val !== null || 'Altura é obrigatória',
               val => val > 0 || 'Altura deve ser maior que 0',
               val => val < 3 || 'Altura inválida'
@@ -39,13 +39,13 @@
       <div class="row q-gutter-sm">
         <!-- Rua -->
         <div class="col">
-          <q-input filled v-model="formularioPrincipal.rua" label="Rua" placeholder="Digite sua rua" clearable
-            hide-bottom-space :rules="[ val => !!val || 'Rua é obrigatória' ]" />
+          <q-input lazy-rules filled v-model="formularioPrincipal.rua" label="Rua" placeholder="Digite sua rua"
+            clearable hide-bottom-space :rules="[ val => !!val || 'Rua é obrigatória' ]" />
         </div>
 
         <!-- Número -->
         <div class="col">
-          <q-input filled v-model.number="formularioPrincipal.numero" label="Número" type="number" clearable
+          <q-input lazy-rules filled v-model.number="formularioPrincipal.numero" label="Número" type="number" clearable
             hide-bottom-space
             :rules="[ val => val !== null || 'Número é obrigatório', val => val > 0 || 'Número inválido' ]" />
         </div>
@@ -54,7 +54,7 @@
       <br>
 
       <!-- Cidade -->
-      <CidadeSelect v-model="formularioPrincipal.cidadeSelecionada" />
+      <CidadeSelect lazy-rules v-model="formularioPrincipal.cidadeSelecionada" />
 
       <div class="q-mt-md">
         <q-btn color="secondary" label="Gravar" type="submit" />
@@ -179,14 +179,19 @@
     }
   }
 
+  const estadoInicial = {
+    nome: '',
+    dataDeNascimento: '',
+    peso: null,
+    altura: null,
+    rua: '',
+    numero: null,
+    cidadeSelecionada: null
+  };
+
   function limparFormularioPrincipal() {
-    formularioPrincipal.nome = '';
-    formularioPrincipal.dataDeNascimento = '';
-    formularioPrincipal.peso = null;
-    formularioPrincipal.altura = null;
-    formularioPrincipal.rua = '';
-    formularioPrincipal.numero = null;
-    formularioPrincipal.cidadeSelecionada = null;
+    Object.assign(formularioPrincipal, estadoInicial);
+
     if (formRef.value) {
       formRef.value.resetValidation();
     }
@@ -195,25 +200,19 @@
 
   // No Usuarios.vue
   async function atualizarUsuario(dados) {
-
-    let dadosCorretos: DadosUsuario;
-
-    if (dados.endereco) {
-      dadosCorretos = dados;
-    } else {
-      dadosCorretos = {
-        id: dados.id,
-        nome: dados.nome,
-        dataDeNascimento: dados.dataDeNascimento,
-        peso: dados.peso,
-        altura: dados.altura,
-        endereco: {
-          rua: dados.rua,
-          numero: dados.numero,
-          cod_cidade: dados.cidadeSelecionada
-        }
-      };
-    }
+    // SEMPRE montar a estrutura correta, sem confiar no que veio
+    const dadosCorretos: DadosUsuario = {
+      id: dados.id,
+      nome: dados.nome,
+      dataDeNascimento: dados.dataDeNascimento,
+      peso: dados.peso,
+      altura: dados.altura,
+      endereco: {
+        rua: dados.endereco?.rua || dados.rua,  // tenta pegar de endereco ou direto
+        numero: dados.endereco?.numero || dados.numero,
+        cod_cidade: dados.endereco?.cod_cidade || dados.cidadeSelecionada
+      }
+    };
 
     try {
       await atualizarUsuarioService(dadosCorretos);
@@ -226,6 +225,7 @@
       alert('Erro ao atualizar usuário');
     }
   }
+
 
 
 
