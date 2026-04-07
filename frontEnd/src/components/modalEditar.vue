@@ -56,19 +56,45 @@
     import { ref, reactive, watch, computed } from 'vue'
     import CidadeSelect from 'components/CidadeSelect.vue'
 
+    // Interfaces primeiro
+    interface Usuario {
+        id: number
+        nome: string
+        peso: number
+        altura: number
+        dataDeNascimento: string
+        endereco?: Array<{
+            rua: string
+            numero: number
+            cod_cidade: number
+        }>
+    }
+
+    interface DadosUsuario {
+        id: number
+        nome: string
+        dataDeNascimento: string
+        peso: number
+        altura: number
+        endereco: {
+            rua: string
+            numero: number
+            cod_cidade: number
+        }
+    }
+
     // Props
-    const props = defineProps < {
+    const props = defineProps<{
         modeloAberto: boolean
-  usuario?: Usuario | null
-    } > ()
+        usuario?: Usuario | null
+    }>()
 
-    // Emits (tipado corretamente)
-    const emit = defineEmits < {
-  (e: 'update:modeloAberto', value: boolean): void
-        (e: 'salvar', usuario: DadosUsuario): void
-}> ()
+    // Emits (sintaxe corrigida)
+    const emit = defineEmits<{
+        'update:modeloAberto': [value: boolean]
+        'salvar': [dados: DadosUsuario]
+    }>()
 
-    // v-model correto com computed
     const dialogVisible = computed({
         get: () => props.modeloAberto,
         set: (val) => emit('update:modeloAberto', val)
@@ -76,7 +102,6 @@
 
     const formEditarRef = ref()
 
-    // Formulário local (formato achatado para facilitar a edição no formulário)
     const formularioLocal = reactive({
         id: 0,
         nome: '',
@@ -88,14 +113,12 @@
         cidadeSelecionada: 0
     })
 
-    // Preenche quando abre
     watch(() => props.modeloAberto, (abriu) => {
         if (abriu && props.usuario) {
             preencherFormulario(props.usuario)
         }
     })
 
-    // Preencher form
     function preencherFormulario(usuario: Usuario) {
         const endereco = usuario.endereco?.[0]
 
@@ -111,7 +134,6 @@
         formularioLocal.cidadeSelecionada = endereco?.cod_cidade || 0
     }
 
-    // Limpa quando fecha
     function limparModal() {
         formularioLocal.id = 0
         formularioLocal.nome = ''
@@ -123,7 +145,6 @@
         formularioLocal.cidadeSelecionada = 0
     }
 
-    // Validar e emitir - VERSÃO CORRIGIDA
     async function validarAntesSalvar() {
         const valido = await formEditarRef.value.validate()
 
@@ -148,17 +169,4 @@
         console.log('📦 Dados convertidos para enviar:', dadosParaEnviar)
         emit('salvar', dadosParaEnviar)
     }
-  interface DadosUsuario {
-  id: number
-  nome: string
-  dataDeNascimento: string
-  peso: number
-  altura: number
-  endereco: {  // ← Isso é o mais importante!
-    rua: string
-    numero: number
-    cod_cidade: number
-  }
-}
-
 </script>

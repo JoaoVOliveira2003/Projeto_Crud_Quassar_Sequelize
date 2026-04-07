@@ -17,8 +17,8 @@
   } > ()
 
   const emit = defineEmits < {
-  (_e: 'update:modelValue', _value: number | null): void
-}> ()
+    'update:modelValue': [value: number | null]
+  } > ()
 
   const cidades = ref < Cidade[] > ([])
   const internalValue = ref < number | null > (props.modelValue)

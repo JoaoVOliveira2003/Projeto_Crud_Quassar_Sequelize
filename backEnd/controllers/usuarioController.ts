@@ -3,11 +3,11 @@ import { getTodosUsuarios } from "../services/usuarioService";
 import { salvarUsuario } from "../services/usuario-salvar-service";
 import { deletarUsuarioService } from "../services/usuario-deletar-service";
 import { atualizarUsuarioService } from "../services/usuario-atualizar-service";
+import { Transaction } from 'sequelize'
 
 export namespace usuarioController {
   export async function getUsuarios(req: Request, res: Response) {
     try {
-      // const id_usuario = req?.params?.id ?? -1
       const usuarios = await getTodosUsuarios();
       res.json(usuarios);
     } catch (error: any) {
@@ -25,10 +25,7 @@ export namespace usuarioController {
       console.error(error);
       res
         .status(500)
-        .json({
-          erro: "Erro ao criar usuário com endereço",
-          detalhes: error.message,
-        });
+        .json({erro: "Erro ao criar usuário com endereço",detalhes: error.message,});
     }
   }
 

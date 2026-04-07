@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes,Op } from 'sequelize';
 import { conecta } from "../config/conecta.js";
 
 export const CidadeSchema = conecta.define('Cidade', {
@@ -22,6 +22,7 @@ CidadeSchema.associate = function (schema) {
 export class CidadeQuery {
   schema() {return CidadeSchema}
 
+  //Cara,se vc quiser fazer os where,like da vida, por favor utilize o Op !!!
   async getTodasCidades(){
     return await CidadeSchema.findAll();
   }

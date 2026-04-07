@@ -9,5 +9,5 @@ export async function atualizarUsuarioService(
 ){
     await endereco_query.atualizarEndereco(id, usuario.endereco);
     await usuario_query.atualizarUsuario(id,usuario);
-    return {mensagem: "Usuaio e endereco atualizado"};
+    return {mensagem: "Usuario e endereco atualizado"};
 }
