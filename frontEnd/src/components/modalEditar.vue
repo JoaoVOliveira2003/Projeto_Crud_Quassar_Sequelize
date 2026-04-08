@@ -6,42 +6,30 @@
 
                 <q-form ref="formEditarRef">
                     <!-- Nome -->
-                    <q-input v-model="formularioLocal.nome" label="Nome" :rules="[
-              val => !!val || 'Nome é obrigatório',
-              val => val.length >= 3 || 'Nome deve ter pelo menos 3 caracteres'
-            ]" clearable hide-bottom-space />
+                    <q-input v-model="formularioLocal.nome" label="Nome" :rules="regras.nome" clearable/>
 
                     <!-- Data -->
                     <q-input type="date" v-model="formularioLocal.dataDeNascimento" label="Data"
-                        :rules="[val => !!val || 'Data é obrigatória']" clearable hide-bottom-space />
+                        :rules="regras.dataDeNascimento" clearable  />
 
                     <!-- Peso -->
-                    <q-input type="number" v-model.number="formularioLocal.peso" label="Peso (kg)" :rules="[
-              val => val !== null || 'Peso é obrigatório',
-              val => val > 0 || 'Peso deve ser maior que 0'
-            ]" clearable hide-bottom-space />
+                    <q-input type="number" v-model.number="formularioLocal.peso" label="Peso (kg)" :rules="regras.peso" clearable  />
 
                     <!-- Altura -->
                     <q-input type="number" v-model.number="formularioLocal.altura" label="Altura (m)" step="0.01"
-                        :rules="[
-                            val => val !== null || 'Altura é obrigatória',
-                            val => val > 0 || 'Altura deve ser maior que 0',
-                            val => val < 3 || 'Altura inválida'
-                        ]" clearable hide-bottom-space />
+                        :rules="regras.altura" clearable  />
 
                     <!-- Rua -->
-                    <q-input v-model="formularioLocal.rua" label="Rua" :rules="[val => !!val || 'Rua é obrigatória']"
-                        clearable hide-bottom-space />
+                    <q-input v-model="formularioLocal.rua" label="Rua" :rules="regras.rua"
+                        clearable  />
 
                     <!-- Número -->
-                    <q-input type="number" v-model.number="formularioLocal.numero" label="Número" :rules="[
-              val => val !== null || 'Número é obrigatório',
-              val => val > 0 || 'Número inválido'
-            ]" clearable hide-bottom-space />
+                    <q-input type="number" v-model.number="formularioLocal.numero" label="Número" :rules="regras.numero" clearable  />
 
                     <!-- Cidade -->
                     <CidadeSelect v-model="formularioLocal.cidadeSelecionada" />
                 </q-form>
+
             </q-card-section>
 
             <q-card-actions align="right">
@@ -56,17 +44,19 @@
     import { ref, reactive, watch, computed } from 'vue'
     import CidadeSelect from 'components/CidadeSelect.vue'
     import type { DadosUsuario, Usuario } from '../../interface/usuarioInterface'
+    import { regras } from 'src/utils/validacao/regras'
+    import { validarObjeto } from 'src/utils/validacao/validacao'
 
 
-    const props = defineProps<{
-        modeloAberto: boolean
+    const props = defineProps < {
+        modeloAberto: boolean,
         usuario?: Usuario | null
-    }>()
+    } > ()
 
-    const emit = defineEmits<{
-        'update:modeloAberto': [value: boolean]
+    const emit = defineEmits < {
+        'update:modeloAberto': [value: boolean],
         'salvar': [dados: DadosUsuario]
-    }>()
+    } > ()
 
     const dialogVisible = computed({
         get: () => props.modeloAberto,
@@ -100,7 +90,7 @@
         formularioLocal.nome = usuario.nome
         formularioLocal.peso = usuario.peso
         formularioLocal.altura = usuario.altura
-        formularioLocal.dataDeNascimento = usuario.dataDeNascimento? usuario.dataDeNascimento.split('T')[0]: ''
+        formularioLocal.dataDeNascimento = usuario.dataDeNascimento ? usuario.dataDeNascimento.split('T')[0] : ''
         formularioLocal.rua = endereco?.rua || ''
         formularioLocal.numero = endereco?.numero || 0
         formularioLocal.cidadeSelecionada = endereco?.cod_cidade || 0
@@ -137,6 +127,13 @@
                 cod_cidade: formularioLocal.cidadeSelecionada
             }
         }
+
+          const erros = validarObjeto(dadosParaEnviar)
+
+  if (erros.length > 0) {
+    alert(erros.join('\n'))
+    return
+  }
 
         emit('salvar', dadosParaEnviar)
     }

@@ -5,34 +5,23 @@
 
       <!-- Nome -->
       <q-input filled v-model="formularioPrincipal.nome" label="Nome" class="bordered q-mb-sm"
-        placeholder="Digite seu nome" clearable hide-bottom-space :rules="[
-          val => !!val || 'Nome é obrigatório',
-          val => val.length >= 3 || 'Nome deve ter pelo menos 3 caracteres'
-        ]" lazy-rules />
+        placeholder="Digite seu nome" clearable hide-bottom-space  lazy-rules :rules="regras.nome" />
 
       <!-- Data -->
       <q-input lazy-rules filled v-model="formularioPrincipal.dataDeNascimento" label="Data de Nascimento" type="date"
-        class="bordered q-mb-sm" clearable hide-bottom-space :rules="[ val => !!val || 'Data é obrigatória' ] " />
+        class="bordered q-mb-sm" clearable hide-bottom-space :rules="regras.dataDeNascimento" />
 
       <div class="row q-gutter-sm">
         <!-- Peso -->
         <div class="col">
           <q-input lazy-rules filled v-model.number="formularioPrincipal.peso" label="Peso (kg)" type="number"
-            class="bordered q-mb-sm" clearable hide-bottom-space @keypress="limparCampoPeso" :rules="[
-              val => val !== null || 'Peso é obrigatório',
-              val => val > 0 || 'Peso deve ser maior que 0',
-              val => val < 500 || 'Peso inválido'
-            ]" />
+            class="bordered q-mb-sm" clearable hide-bottom-space @keypress="limparCampoPeso" :rules="regras.peso"  />
         </div>
 
         <!-- Altura -->
         <div class="col">
           <q-input lazy-rules filled v-model.number="formularioPrincipal.altura" label="Altura (m)" type="number"
-            step="0.01" class="bordered q-mb-sm" clearable hide-bottom-space :rules="[
-              val => val !== null || 'Altura é obrigatória',
-              val => val > 0 || 'Altura deve ser maior que 0',
-              val => val < 3 || 'Altura inválida'
-            ]" />
+            step="0.01" class="bordered q-mb-sm" clearable hide-bottom-space :rules="regras.altura" />
         </div>
       </div>
 
@@ -40,21 +29,21 @@
         <!-- Rua -->
         <div class="col">
           <q-input lazy-rules filled v-model="formularioPrincipal.rua" label="Rua" placeholder="Digite sua rua"
-            clearable hide-bottom-space :rules="[ val => !!val || 'Rua é obrigatória' ]" />
+            clearable hide-bottom-space :rules="regras.rua" />
         </div>
 
         <!-- Número -->
         <div class="col">
           <q-input lazy-rules filled v-model.number="formularioPrincipal.numero" label="Número" type="number" clearable
             hide-bottom-space
-            :rules="[ val => val !== null || 'Número é obrigatório', val => val > 0 || 'Número inválido' ]" />
+            :rules="regras.numero" />
         </div>
       </div>
 
       <br>
 
       <!-- Cidade -->
-      <CidadeSelect lazy-rules v-model="formularioPrincipal.cidadeSelecionada" />
+      <CidadeSelect  lazy-rules v-model="formularioPrincipal.cidadeSelecionada" :rules="regras.cidadeSelecionada"/>
 
       <div class="q-mt-md">
         <q-btn color="secondary" label="Gravar" type="submit" />
@@ -99,10 +88,12 @@
   import { criarUsuario } from '../../services/Usuarios/criarUsuarioService';
   import { atualizarUsuarioService } from '../../services/Usuarios/atualizarUsuarioService';
   import { deletarUsuario } from '../../services/Usuarios/deletarUsuarioService';
+  import { validarObjeto } from 'src/utils/validacao/validacao'
 
   import { ref, reactive, onMounted } from 'vue';
 
   import type { DadosUsuario, Usuario } from '../../interface/usuarioInterface'
+    import { regras } from 'src/utils/validacao/regras'
 
 
   const formRef = ref();
@@ -135,17 +126,6 @@
   });
 
   async function createUsuarioTodosDados() {
-    const isFormValid = await formRef.value.validate();
-
-    if (!isFormValid) {
-      alert('Por favor, preencha todos os campos corretamente.');
-      return;
-    }
-
-    if (!formularioPrincipal.cidadeSelecionada) {
-      alert('Por favor, selecione uma cidade.');
-      return;
-    }
 
     const usuario: DadosUsuario = 
     { nome: formularioPrincipal.nome,
@@ -158,6 +138,12 @@
         cod_cidade: formularioPrincipal.cidadeSelecionada 
       } 
     };
+
+    const erros = validarObjeto(usuario)
+    if (erros.length > 0) {
+      alert(erros.join('\n'))
+      return
+    }
 
     try {
       const res = await criarUsuario(usuario);
@@ -234,10 +220,9 @@
   }
 
   function abrirModalEditar(row: Usuario) {
-    usuarioParaEditar.value = row;  // APENAS ISSO!
+    usuarioParaEditar.value = row;  
     modalAberto.value = true;
   }
-
 
   function abrirModalDeletar(row: Usuario) {
     usuarioParaDeletar.value = row;

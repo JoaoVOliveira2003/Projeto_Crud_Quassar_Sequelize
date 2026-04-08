@@ -1,0 +1,31 @@
+type FuncaoRegra = (valor: unknown, objeto?: Record<string, unknown>) => true | string;
+
+export const regras: Record<string, FuncaoRegra[]> = {
+  nome: [
+    (valor) => !!valor || 'Nome é obrigatório.',
+    (valor) => typeof valor === 'string' && valor.length >= 3 || 'Nome tem que ser maior que três.',
+  ],
+  dataDeNascimento: [
+    (valor) => !!valor || 'Data é obrigatória valor',
+  ],
+  peso: [
+    (valor) => valor !== null && valor !== undefined || 'Peso é obrigatório valor',
+    (valor) => typeof valor === 'number' && valor > 0 || 'Peso deve ser maior que 0',
+  ],
+  altura: [
+    (valor) => valor !== null && valor !== undefined || 'Altura é obrigatória',
+    (valor) => typeof valor === 'number' && valor > 0 || 'Altura deve ser maior que 0',
+    (valor) => typeof valor === 'number' && valor < 3 || 'Altura inválida',
+  ],
+  rua: [
+    (valor) => !!valor || 'Rua é obrigatória',
+  ],
+  numero: [
+    (valor) => valor !== null && valor !== undefined || 'Número é obrigatório',
+    (valor) => typeof valor === 'number' && valor > 0 || 'Número inválido',
+  ],
+  cidadeSelecionada:[
+    (valor) => valor !== null && valor !== undefined || 'Nescessario preencher alguma cidade',
+
+  ]
+};
