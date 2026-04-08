@@ -94,7 +94,6 @@
   import ModalDeletar from 'components/ModalDeletar.vue';
   import ModalEditar from 'components/ModalEditar.vue';
   import CidadeSelect from 'components/CidadeSelect.vue';
-  import type { DadosUsuario, Usuario } from '../../interface/usuarioInterface'
 
   import { carregarUsuarios } from '../../services/Usuarios/listarUsuarioService';
   import { criarUsuario } from '../../services/Usuarios/criarUsuarioService';
@@ -102,6 +101,9 @@
   import { deletarUsuario } from '../../services/Usuarios/deletarUsuarioService';
 
   import { ref, reactive, onMounted } from 'vue';
+
+  import type { DadosUsuario, Usuario } from '../../interface/usuarioInterface'
+
 
   const formRef = ref();
   const usuarioParaEditar = ref < Usuario | null > (null);
@@ -125,7 +127,7 @@
   const colunas = [
     { name: 'id', label: 'ID', field: 'id', sortable: true },
     { name: 'nome', label: 'Nome', field: 'nome', sortable: true },
-    { name: 'acoes', label: 'Ações', align: '' }
+    { name: 'acoes', label: 'Ações', align: 'center' }
   ];
 
   onMounted(async () => {
@@ -145,7 +147,17 @@
       return;
     }
 
-    const usuario: DadosUsuario = { nome: formularioPrincipal.nome, dataDeNascimento: formularioPrincipal.dataDeNascimento, peso: formularioPrincipal.peso, altura: formularioPrincipal.altura, endereco: { rua: formularioPrincipal.rua, numero: formularioPrincipal.numero, cod_cidade: formularioPrincipal.cidadeSelecionada } };
+    const usuario: DadosUsuario = 
+    { nome: formularioPrincipal.nome,
+      dataDeNascimento: formularioPrincipal.dataDeNascimento,
+      peso: formularioPrincipal.peso,
+      altura: formularioPrincipal.altura,
+      endereco: {
+        rua: formularioPrincipal.rua,
+        numero: formularioPrincipal.numero,
+        cod_cidade: formularioPrincipal.cidadeSelecionada 
+      } 
+    };
 
     try {
       const res = await criarUsuario(usuario);
@@ -176,7 +188,6 @@
 
   }
 
-  // No Usuarios.vue
   async function atualizarUsuario(dados: Usuario) {
     const dadosCorretos: DadosUsuario = {
       id: dados.id,
@@ -237,20 +248,4 @@
     if (event.key === ',' || event.key === '.' || !/[0-9]/.test(event.key)) event.preventDefault();
   }
 
-  // Interface para o tipo Usuario (ajuste conforme sua necessidade)
-  interface Usuario {
-    id: number;
-    nome: string;
-    peso: number;
-    altura: number;
-    dataDeNascimento: string;
-    rua?: string;
-    numero?: number;
-    cidadeSelecionada?: number;
-    endereco?: Array<{
-      rua: string;
-      numero: number;
-      cod_cidade: number;
-    }>;
-  }
 </script>

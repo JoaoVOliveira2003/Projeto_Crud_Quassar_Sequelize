@@ -6,7 +6,6 @@
           Tem certeza que quer deletar "{{ usuario?.nome }}"?
         </div>
       </q-card-section>
-
       <q-card-actions align="center">
         <q-btn flat label="Cancelar" color="secondary" v-close-popup />
         <q-btn flat label="Deletar" color="negative" @click="confirmarDelete" />
@@ -17,36 +16,21 @@
 
 <script setup lang="ts">
   import { computed } from 'vue'
+  import type { Usuario } from '../../interface/usuarioInterface'
 
-  // Interface primeiro
-  interface Usuario {
-    id: number
-    nome: string
-    peso: number
-    altura: number
-    dataDeNascimento: string
-    endereco?: Array<{
-      rua: string
-      numero: number
-      cod_cidade: number
-    }>
-  }
-
-  // Props
+  //define props -> entrada do de dados
   const props = defineProps<{
-    modeloAberto: boolean
-    usuario?: Usuario | null
+    modeloAberto: boolean, usuario?: Usuario | null
   }>()
 
-
+  // enviar eventos do filho para o pai.
   const emit = defineEmits<{
-    'update:modeloAberto': [value: boolean]
-    'confirmarDelete': []
+    'update:modeloAberto': [value: boolean], 'confirmarDelete': []
   }>()
 
+  //sempre que uma outra variavel for atualizad no ref ele vai ser atualizado tambem
   const model = computed({
-    get: () => props.modeloAberto,
-    set: (val) => emit('update:modeloAberto', val)
+    get: () => props.modeloAberto, set: (val) => emit('update:modeloAberto', val)
   })
 
   function confirmarDelete() {

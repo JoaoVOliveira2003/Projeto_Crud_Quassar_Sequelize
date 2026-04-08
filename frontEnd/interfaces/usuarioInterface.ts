@@ -1,6 +1,3 @@
-// src/interfaces/usuario.ts
-
-// Interface para CRIAR/ATUALIZAR usuário (formato que vai para a API)
 export interface DadosUsuario {
   id?: number;
   nome: string;
@@ -14,7 +11,6 @@ export interface DadosUsuario {
   };
 }
 
-// Interface do usuário que VOLTA da API (pode vir achatado ou com endereco array)
 export interface Usuario {
   id: number;
   nome: string;

@@ -24,10 +24,10 @@
                     <!-- Altura -->
                     <q-input type="number" v-model.number="formularioLocal.altura" label="Altura (m)" step="0.01"
                         :rules="[
-              val => val !== null || 'Altura é obrigatória',
-              val => val > 0 || 'Altura deve ser maior que 0',
-              val => val < 3 || 'Altura inválida'
-            ]" clearable hide-bottom-space />
+                            val => val !== null || 'Altura é obrigatória',
+                            val => val > 0 || 'Altura deve ser maior que 0',
+                            val => val < 3 || 'Altura inválida'
+                        ]" clearable hide-bottom-space />
 
                     <!-- Rua -->
                     <q-input v-model="formularioLocal.rua" label="Rua" :rules="[val => !!val || 'Rua é obrigatória']"
@@ -55,41 +55,14 @@
 <script setup lang="ts">
     import { ref, reactive, watch, computed } from 'vue'
     import CidadeSelect from 'components/CidadeSelect.vue'
+    import type { DadosUsuario, Usuario } from '../../interface/usuarioInterface'
 
-    // Interfaces primeiro
-    interface Usuario {
-        id: number
-        nome: string
-        peso: number
-        altura: number
-        dataDeNascimento: string
-        endereco?: Array<{
-            rua: string
-            numero: number
-            cod_cidade: number
-        }>
-    }
 
-    interface DadosUsuario {
-        id: number
-        nome: string
-        dataDeNascimento: string
-        peso: number
-        altura: number
-        endereco: {
-            rua: string
-            numero: number
-            cod_cidade: number
-        }
-    }
-
-    // Props
     const props = defineProps<{
         modeloAberto: boolean
         usuario?: Usuario | null
     }>()
 
-    // Emits (sintaxe corrigida)
     const emit = defineEmits<{
         'update:modeloAberto': [value: boolean]
         'salvar': [dados: DadosUsuario]
@@ -113,6 +86,7 @@
         cidadeSelecionada: 0
     })
 
+    //observar mudanças em uma variável
     watch(() => props.modeloAberto, (abriu) => {
         if (abriu && props.usuario) {
             preencherFormulario(props.usuario)
@@ -126,9 +100,7 @@
         formularioLocal.nome = usuario.nome
         formularioLocal.peso = usuario.peso
         formularioLocal.altura = usuario.altura
-        formularioLocal.dataDeNascimento = usuario.dataDeNascimento
-            ? usuario.dataDeNascimento.split('T')[0]
-            : ''
+        formularioLocal.dataDeNascimento = usuario.dataDeNascimento? usuario.dataDeNascimento.split('T')[0]: ''
         formularioLocal.rua = endereco?.rua || ''
         formularioLocal.numero = endereco?.numero || 0
         formularioLocal.cidadeSelecionada = endereco?.cod_cidade || 0
@@ -166,7 +138,6 @@
             }
         }
 
-        console.log('📦 Dados convertidos para enviar:', dadosParaEnviar)
         emit('salvar', dadosParaEnviar)
     }
 </script>
