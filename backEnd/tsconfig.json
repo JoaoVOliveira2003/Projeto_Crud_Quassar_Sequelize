@@ -4,6 +4,8 @@
     "module": "es2020",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
+  "esModuleInterop": true,
+
     "outDir": "./dist",
     "rootDir": "./",
     "allowImportingTsExtensions": true,

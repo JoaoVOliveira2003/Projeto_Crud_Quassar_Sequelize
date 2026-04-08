@@ -2,12 +2,12 @@ export interface DadosUsuario {
   id?: number;
   nome: string;
   dataDeNascimento: string;
-  peso: number;
-  altura: number;
+  peso: number | null;
+  altura: number | null;
   endereco: {
     rua: string;
-    numero: number;
-    cod_cidade: number;
+    numero: number | null;
+    cod_cidade: number | null;
   };
 }
 

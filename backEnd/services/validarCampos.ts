@@ -6,27 +6,23 @@ export function validarGenerico(dados: any): true | string[] {
       const valor = obj[chave];
       const caminhoCompleto = [...caminho, chave];
 
-      // 🔁 objeto aninhado
       if (valor !== null && typeof valor === 'object' && !Array.isArray(valor)) {
         percorrer(valor, caminhoCompleto);
         continue;
       }
 
-      // 🔤 nome
       if (chave === 'nome' && valor !== undefined && valor !== null) {
         if (typeof valor !== 'string' || valor.length < 3) {
           erros.push(`${caminhoCompleto.join('.')} → Nome tem que ser maior que três.`);
         }
       }
 
-      // 📅 data
       if (chave === 'dataDeNascimento' && valor !== undefined && valor !== null) {
         if (!valor) {
           erros.push(`${caminhoCompleto.join('.')} → Data é obrigatória`);
         }
       }
 
-      // ⚖️ peso
       if (chave === 'peso' && valor !== undefined && valor !== null) {
         if (isNaN(valor)) {
           erros.push(`${caminhoCompleto.join('.')} → Peso inválido`);
@@ -35,7 +31,6 @@ export function validarGenerico(dados: any): true | string[] {
         }
       }
 
-      // 📏 altura
       if (chave === 'altura' && valor !== undefined && valor !== null) {
         if (isNaN(valor)) {
           erros.push(`${caminhoCompleto.join('.')} → Altura inválida`);
@@ -49,14 +44,12 @@ export function validarGenerico(dados: any): true | string[] {
         }
       }
 
-      // 🏠 rua
       if (chave === 'rua' && valor !== undefined && valor !== null) {
         if (!valor) {
           erros.push(`${caminhoCompleto.join('.')} → Rua é obrigatória`);
         }
       }
 
-      // 🔢 numero
       if (chave === 'numero' && valor !== undefined && valor !== null) {
         if (isNaN(valor)) {
           erros.push(`${caminhoCompleto.join('.')} → Número inválido`);
@@ -65,7 +58,6 @@ export function validarGenerico(dados: any): true | string[] {
         }
       }
 
-      // 🌆 cidade
       if (chave === 'cod_cidade' && valor !== undefined && valor !== null) {
         if (!valor) {
           erros.push(`${caminhoCompleto.join('.')} → Necessário preencher alguma cidade`);

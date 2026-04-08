@@ -1,7 +1,6 @@
 import { DataTypes } from "sequelize";
 import { conecta } from "../config/conecta";
 import {enderecoInterface} from "../interfaces/enderecoInterface"
-import {DadosUsuario} from "../interfaces/usuarioInterface"
 
 export const EnderecoSchema = conecta.define("Endereco", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },

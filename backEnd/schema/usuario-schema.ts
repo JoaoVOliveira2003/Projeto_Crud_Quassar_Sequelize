@@ -2,6 +2,7 @@ import { DataTypes } from "sequelize";
 import { conecta } from "../config/conecta";
 import { EnderecoSchema } from "./endereco-schema.js";
 import { CidadeSchema } from "./cidade-shema.js";
+import {DadosUsuario} from "../interfaces/usuarioInterface"
 
 export const UsuarioSchema = conecta.define("Usuario", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -11,7 +12,7 @@ export const UsuarioSchema = conecta.define("Usuario", {
   altura: { type: DataTypes.FLOAT, allowNull: true },
 });
 
-UsuarioSchema.associate = function (schema) {
+(UsuarioSchema as any).associate = function (schema : any) {
   this.hasMany(schema.EnderecoSchema, {
     foreignKey: "id_usuario",
     as: "endereco",
@@ -44,15 +45,15 @@ export class UsuarioQuery {
     }
   }
 
-  async criarUsuario(usuario) {
+  async criarUsuario(usuario : DadosUsuario) {
     try {
-      return await UsuarioSchema.create(usuario);
+      return await UsuarioSchema.create(usuario as any);
     } catch (error) {
       throw error;
     }
   }
 
-  async deletarUsuario(id) {
+  async deletarUsuario(id : number) {
     try {
       return UsuarioSchema.destroy({ where: { id } });
     } catch (error) {
@@ -60,7 +61,7 @@ export class UsuarioQuery {
     }
   }
 
-  async atualizarUsuario(id, usuario) {
+  async atualizarUsuario(id : number, usuario : DadosUsuario) {
     try {
       const [linhasAfetadas] = await UsuarioSchema.update(usuario, {
         where: { id },

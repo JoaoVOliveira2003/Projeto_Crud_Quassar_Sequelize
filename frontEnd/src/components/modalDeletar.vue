@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
   import { computed } from 'vue'
-  import type { Usuario } from '../../interface/usuarioInterface'
+  import type { Usuario } from '../../interfaces/usuarioInterface'
 
   //define props -> entrada do de dados
   const props = defineProps<{

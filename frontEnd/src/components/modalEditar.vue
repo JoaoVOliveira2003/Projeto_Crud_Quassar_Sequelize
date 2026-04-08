@@ -42,8 +42,8 @@
 
 <script setup lang="ts">
     import { ref, reactive, watch, computed } from 'vue'
-    import CidadeSelect from 'components/CidadeSelect.vue'
-    import type { DadosUsuario, Usuario } from '../../interface/usuarioInterface'
+    import CidadeSelect from 'CidadeSelect.vue'
+    import type { DadosUsuario, Usuario } from '../../interfaces/usuarioInterface'
     import { regras } from 'src/utils/validacao/regras'
     import { validarObjeto } from 'src/utils/validacao/validacao'
 
@@ -90,7 +90,7 @@
         formularioLocal.nome = usuario.nome
         formularioLocal.peso = usuario.peso
         formularioLocal.altura = usuario.altura
-        formularioLocal.dataDeNascimento = usuario.dataDeNascimento ? usuario.dataDeNascimento.split('T')[0] : ''
+        formularioLocal.dataDeNascimento = usuario.dataDeNascimento?.split('T')[0] ?? ''
         formularioLocal.rua = endereco?.rua || ''
         formularioLocal.numero = endereco?.numero || 0
         formularioLocal.cidadeSelecionada = endereco?.cod_cidade || 0

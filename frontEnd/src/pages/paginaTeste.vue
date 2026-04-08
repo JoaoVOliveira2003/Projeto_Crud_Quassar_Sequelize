@@ -80,9 +80,9 @@
 </template>
 
 <script setup lang="ts">
-  import ModalDeletar from 'components/ModalDeletar.vue';
-  import ModalEditar from 'components/ModalEditar.vue';
-  import CidadeSelect from 'components/CidadeSelect.vue';
+  import ModalDeletar from '../components/modalDeletar.vue';
+  import ModalEditar from '../components/modalDeletar.vue';
+  import CidadeSelect from '../components/cidadeSelect.vue';
 
   import { carregarUsuarios } from '../../services/Usuarios/listarUsuarioService';
   import { criarUsuario } from '../../services/Usuarios/criarUsuarioService';
@@ -92,8 +92,8 @@
 
   import { ref, reactive, onMounted } from 'vue';
 
-  import type { DadosUsuario, Usuario } from '../../interface/usuarioInterface'
-    import { regras } from 'src/utils/validacao/regras'
+  import type { DadosUsuario, Usuario } from '../../interfaces/usuarioInterface'
+  import { regras } from 'src/utils/validacao/regras'
 
 
   const formRef = ref();
@@ -126,6 +126,7 @@
   });
 
   async function createUsuarioTodosDados() {
+
 
     const usuario: DadosUsuario = 
     { nome: formularioPrincipal.nome,

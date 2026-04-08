@@ -2,7 +2,7 @@ import {UsuarioQuery} from "../schema/usuario-schema";
 import {EnderecoQuery} from "../schema/endereco-schema";
 
 export async function deletarUsuarioService(
-    id,
+    id  : number,
     usuario_query: UsuarioQuery = new UsuarioQuery(),
     endereco_query: EnderecoQuery = new EnderecoQuery()
 ) {

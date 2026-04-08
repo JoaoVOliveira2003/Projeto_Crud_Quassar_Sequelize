@@ -1,17 +1,19 @@
 import { UsuarioQuery } from "../schema/usuario-schema";
 import { EnderecoQuery } from "../schema/endereco-schema";
 import {validarGenerico} from "./validarCampos"
+import {DadosUsuario} from "../interfaces/usuarioInterface"
 
 export async function atualizarUsuarioService(
-        id,
-        usuario,
+        id : number,
+        usuario:DadosUsuario,
         usuario_query: UsuarioQuery = new UsuarioQuery(),
         endereco_query: EnderecoQuery = new EnderecoQuery()
 ){
 
     const resultado = validarGenerico(usuario);
+
     if (resultado !== true) {
-      throw new Error(resultado);
+    throw new Error(resultado.join(", "));
     }
 
     await endereco_query.atualizarEndereco(id, usuario.endereco);

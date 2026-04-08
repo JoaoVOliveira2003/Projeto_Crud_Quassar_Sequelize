@@ -1,36 +1,52 @@
-import {regras} from './regras';
+import { regras } from './regras'
 
-type listaErros = string[];
+type listaErros = string[]
 
-export function validarObjeto(objeto): listaErros{
-    const erros: listaErros = [];
+type Obj = Record<string, unknown>
 
-    function percorrer(obj,caminho:string[] = []){
-        for (const chave of Object.keys(obj)){
-            const valor = obj[chave];
-            const caminhoCompleto = [...caminho,chave];
+export function validarObjeto(objeto: unknown): listaErros {
+  const erros: listaErros = []
 
-            if(valor !== null && typeof valor ==='object' && !Array.isArray(valor)){
-                percorrer(valor,caminhoCompleto);
-                continue;
-            }
+  function percorrer(obj: unknown, caminho: string[] = []) {
+    if (typeof obj !== 'object' || obj === null) return
 
-            const regrasDoCampo = regras[chave];
+    const o = obj as Obj
 
-            if(regrasDoCampo){
-                for(const regra of regrasDoCampo){
-                    const resultado = regra.length === 2 ? regra(valor,objeto) : regra(valor);
+    for (const chave of Object.keys(o)) {
+      const valor = o[chave]
+      const caminhoCompleto = [...caminho, chave]
 
-                    if(resultado !== true){
-                    erros.push(`${caminhoCompleto.join('.')} → ${resultado}`);
-                    break;
+      if (
+        valor !== null &&
+        typeof valor === 'object' &&
+        !Array.isArray(valor)
+      ) {
+        percorrer(valor, caminhoCompleto)
+        continue
+      }
 
-                    }
-                }
-            }
+      // 🔥 SEM ANY (ESLINT OK)
+      const regrasDoCampo = (regras as Obj)[chave] as
+        | Array<(v: unknown, o?: unknown) => true | string>
+        | undefined
+
+      if (regrasDoCampo) {
+        for (const regra of regrasDoCampo) {
+          const resultado =
+            regra.length === 2
+              ? regra(valor, objeto)
+              : regra(valor)
+
+          if (resultado !== true) {
+            erros.push(`${caminhoCompleto.join('.')} → ${resultado}`)
+            break
+          }
         }
+      }
     }
+  }
 
-    percorrer(objeto);
-    return erros;
+  percorrer(objeto)
+
+  return erros
 }

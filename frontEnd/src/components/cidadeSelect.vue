@@ -13,7 +13,7 @@
 <script setup lang="ts">
   import { ref, onMounted, watch } from 'vue'
   import { listarCidadeService } from '../../services/Cidades/listarCidadeService'
-  import type { Cidade } from '../../interface/cidadeInterface'
+  import type { Cidade } from '../../interfaces/cidadeInterface'
 
   const props = defineProps < {
     modelValue: number | null
