@@ -1,5 +1,5 @@
-import { DataTypes,Op } from 'sequelize';
-import { conecta } from "../config/conecta.js";
+import { DataTypes,Op, } from 'sequelize';
+import { conecta } from "../config/conecta";
 
 export const CidadeSchema = conecta.define('Cidade', {
   cod_cidade: {
@@ -13,7 +13,7 @@ export const CidadeSchema = conecta.define('Cidade', {
   }
 });
 
-CidadeSchema.associate = function (schema) {
+(CidadeSchema as any).associate = function (schema: any) {
   this.hasMany(schema.EnderecoSchema, {
     foreignKey: "cod_cidade",
   });

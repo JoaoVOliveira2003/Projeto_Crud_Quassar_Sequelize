@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { conecta } from "../config/conecta.js";
+import { conecta } from "../config/conecta";
 import { EnderecoSchema } from "./endereco-schema.js";
 import { CidadeSchema } from "./cidade-shema.js";
 

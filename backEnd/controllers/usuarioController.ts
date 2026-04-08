@@ -21,7 +21,7 @@ export namespace usuarioController {
       const usuario = req.body.usuario;
       const retorno = await salvarUsuario(usuario);
       res.json(retorno.toJSON());
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       res
         .status(500)

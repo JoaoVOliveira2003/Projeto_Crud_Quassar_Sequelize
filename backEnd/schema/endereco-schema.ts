@@ -1,5 +1,7 @@
 import { DataTypes } from "sequelize";
-import { conecta } from "../config/conecta.js";
+import { conecta } from "../config/conecta";
+import {enderecoInterface} from "../interfaces/enderecoInterface"
+import {DadosUsuario} from "../interfaces/usuarioInterface"
 
 export const EnderecoSchema = conecta.define("Endereco", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -13,7 +15,7 @@ export const EnderecoSchema = conecta.define("Endereco", {
   },
 });
 
-EnderecoSchema.associate = function (schema) {
+(EnderecoSchema as any).associate = function (schema: any) {
   this.belongsTo(schema.UsuarioSchema, {
     foreignKey: "id_usuario",
   });
@@ -33,7 +35,7 @@ export class EnderecoQuery {
     return await EnderecoSchema.findAll();
   }
 
-  async criarEndereco(endereco) {
+  async criarEndereco(endereco : any) {
     try {
       return await EnderecoSchema.create(endereco);
     } catch (error) {
@@ -41,7 +43,7 @@ export class EnderecoQuery {
     }
   }
 
-  async deletarEndereco(id) {
+  async deletarEndereco(id : number) {
     try {
       return EnderecoSchema.destroy({ where: { id } });
     } catch (error) {
@@ -49,7 +51,7 @@ export class EnderecoQuery {
     }
   }
 
-async atualizarEndereco(id_usuario, usuario) {
+async atualizarEndereco(id_usuario : number, usuario : enderecoInterface) {
   try {
     const [linhasAfetadas] = await EnderecoSchema.update(usuario, { where: { id_usuario: id_usuario }});
     return linhasAfetadas;

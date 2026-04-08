@@ -1,4 +1,4 @@
-import { conecta } from "./config/conecta.js";
+import { conecta } from "./config/conecta";
 import { Usuario } from "./models/Usuario.js";
 import { Cidade } from "./models/Cidade.js";
 import { Endereco } from "./models/Endereco.js";
