@@ -3,7 +3,6 @@ import { getTodosUsuarios } from "../services/usuarioService";
 import { salvarUsuario } from "../services/usuario-salvar-service";
 import { deletarUsuarioService } from "../services/usuario-deletar-service";
 import { atualizarUsuarioService } from "../services/usuario-atualizar-service";
-import { Transaction } from 'sequelize'
 
 export namespace usuarioController {
   export async function getUsuarios(req: Request, res: Response) {
@@ -32,9 +31,7 @@ export namespace usuarioController {
   export async function deletarUsuario(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-
       const retorno = await deletarUsuarioService(id);
-
       res.json(retorno);
     } catch (error: any) {
       console.error(error);

@@ -11,4 +11,3 @@ export interface DadosUsuario {
     cod_cidade: number;
   };
 }
-

@@ -130,10 +130,10 @@
 
           const erros = validarObjeto(dadosParaEnviar)
 
-  if (erros.length > 0) {
-    alert(erros.join('\n'))
-    return
-  }
+        if (erros.length > 0) {
+            alert(erros.join('\n'))
+            return
+        }
 
         emit('salvar', dadosParaEnviar)
     }
