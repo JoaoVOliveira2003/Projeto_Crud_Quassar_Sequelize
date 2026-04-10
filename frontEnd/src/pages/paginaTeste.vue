@@ -1,24 +1,19 @@
 <template>
   <div class="q-pa-md" style="max-width: 600px; margin: auto;">
-    <!-- FORMULÁRIO PRINCIPAL -->
     <q-form ref="formRef" greedy @submit.prevent="createUsuarioTodosDados">
 
-      <!-- Nome -->
       <q-input filled v-model="formularioPrincipal.nome" label="Nome" class="bordered q-mb-sm"
         placeholder="Digite seu nome" clearable hide-bottom-space lazy-rules :rules="regras.nome" />
 
-      <!-- Data -->
       <q-input lazy-rules filled v-model="formularioPrincipal.dataDeNascimento" label="Data de Nascimento" type="date"
         class="bordered q-mb-sm" clearable hide-bottom-space :rules="regras.dataDeNascimento" />
 
       <div class="row q-gutter-sm">
-        <!-- Peso -->
         <div class="col">
           <q-input lazy-rules filled v-model.number="formularioPrincipal.peso" label="Peso (kg)" type="number"
             class="bordered q-mb-sm" clearable hide-bottom-space @keypress="limparCampoPeso" :rules="regras.peso" />
         </div>
 
-        <!-- Altura -->
         <div class="col">
           <q-input lazy-rules filled v-model.number="formularioPrincipal.altura" label="Altura (m)" type="number"
             step="0.01" class="bordered q-mb-sm" clearable hide-bottom-space :rules="regras.altura" />
@@ -26,13 +21,11 @@
       </div>
 
       <div class="row q-gutter-sm">
-        <!-- Rua -->
         <div class="col">
           <q-input lazy-rules filled v-model="formularioPrincipal.rua" label="Rua" placeholder="Digite sua rua"
             clearable hide-bottom-space :rules="regras.rua" />
         </div>
 
-        <!-- Número -->
         <div class="col">
           <q-input lazy-rules filled v-model.number="formularioPrincipal.numero" label="Número" type="number" clearable
             hide-bottom-space :rules="regras.numero" />
@@ -41,7 +34,6 @@
 
       <br>
 
-      <!-- Cidade -->
       <CidadeSelect lazy-rules v-model="formularioPrincipal.cidadeSelecionada" :rules="regras.cidadeSelecionada" />
 
       <div class="q-mt-md">
@@ -82,7 +74,7 @@
 import type { QTableColumn } from 'quasar';
 
 import ModalDeletar from '../components/modalDeletar.vue';
-import ModalEditar from '../components/modalDeletar.vue';
+import ModalEditar from '../components/modalEditar.vue';
 import CidadeSelect from '../components/cidadeSelect.vue';
 
 import { carregarUsuarios } from '../../services/Usuarios/listarUsuarioService';

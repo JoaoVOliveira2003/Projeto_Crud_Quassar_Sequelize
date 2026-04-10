@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
     import { ref, reactive, watch, computed } from 'vue'
-    import CidadeSelect from 'CidadeSelect.vue'
+    import CidadeSelect from './cidadeSelect.vue'
     import type { DadosUsuario, Usuario } from '../../interfaces/usuarioInterface'
     import { regras } from 'src/utils/validacao/regras'
     import { validarObjeto } from 'src/utils/validacao/validacao'
