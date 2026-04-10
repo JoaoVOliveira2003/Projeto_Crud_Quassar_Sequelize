@@ -1,8 +1,13 @@
-type FuncaoRegra = (valor: unknown, objeto?: Record<string, unknown>) => true | string;
 
+//qualquer função usada aqui tem que receber valor e retornar true ou string
+type FuncaoRegra = (valor: unknown) => true | string;
+
+//Define um objeto onde cada chave (string) tem uma lista de funções de validação (FuncaoRegra[])
 export const regras: Record<string, FuncaoRegra[]> = {
+
   nome: [
     (valor) => !!valor || 'Nome é obrigatório.',
+    (valor) => String(valor).toLowerCase() !== 'teste' || 'Valor teste não é aceito.',
     (valor) => typeof valor === 'string' && valor.length >= 3 || 'Nome tem que ser maior que três.',
   ],
   dataDeNascimento: [
@@ -26,6 +31,5 @@ export const regras: Record<string, FuncaoRegra[]> = {
   ],
   cidadeSelecionada:[
     (valor) => valor !== null && valor !== undefined || 'Nescessario preencher alguma cidade',
-
   ]
 };

@@ -1,52 +1,92 @@
-import { regras } from './regras'
+import { regras } from './regras';
 
-type listaErros = string[]
+type ListaDeErros = string[];
+type ObjetoGenerico = Record<string, unknown>;
 
-type Obj = Record<string, unknown>
+export function validarObjeto(objetoDesconhecido: unknown,caminhoPercorrido: string[] = []): ListaDeErros {
+  const errosEncontrados: ListaDeErros = [];
 
-export function validarObjeto(objeto: unknown): listaErros {
-  const erros: listaErros = []
+  if (typeof objetoDesconhecido !== 'object' || objetoDesconhecido === null) {
+    return errosEncontrados;
+  }
 
-  function percorrer(obj: unknown, caminho: string[] = []) {
-    if (typeof obj !== 'object' || obj === null) return
+  const objetoAtual = objetoDesconhecido as ObjetoGenerico;
 
-    const o = obj as Obj
+  for (const chaveAtual of Object.keys(objetoAtual)) {
+    const valorDaChave = objetoAtual[chaveAtual];
+    const caminhoCompleto = [...caminhoPercorrido, chaveAtual];
 
-    for (const chave of Object.keys(o)) {
-      const valor = o[chave]
-      const caminhoCompleto = [...caminho, chave]
+    const objetoNaoArray = valorDaChave !== null && typeof valorDaChave === 'object' && !Array.isArray(valorDaChave);
 
-      if (
-        valor !== null &&
-        typeof valor === 'object' &&
-        !Array.isArray(valor)
-      ) {
-        percorrer(valor, caminhoCompleto)
-        continue
-      }
+    if (objetoNaoArray) {
+      // Recursão para objetos aninhados
+      const errosAninhados = validarObjeto(valorDaChave, caminhoCompleto);
+      errosEncontrados.push(...errosAninhados);
+      continue;
+    }
 
-      // 🔥 SEM ANY (ESLINT OK)
-      const regrasDoCampo = (regras as Obj)[chave] as
-        | Array<(v: unknown, o?: unknown) => true | string>
-        | undefined
+    // Verificar regras do campo
+    const regrasDoCampo = (regras as ObjetoGenerico)[chaveAtual] as
+      | Array<(valorParam: unknown, objetoOriginal?: unknown) => true | string>
+      | undefined;
 
-      if (regrasDoCampo) {
-        for (const regra of regrasDoCampo) {
-          const resultado =
-            regra.length === 2
-              ? regra(valor, objeto)
-              : regra(valor)
-
-          if (resultado !== true) {
-            erros.push(`${caminhoCompleto.join('.')} → ${resultado}`)
-            break
-          }
+    if (regrasDoCampo) {
+      
+      for (const regraAtual of regrasDoCampo) {const resultadoValidacao = regraAtual(valorDaChave);
+        if (resultadoValidacao !== true) {
+          const mensagemErro = `${caminhoCompleto.join('.')} → ${resultadoValidacao}`;
+          errosEncontrados.push(mensagemErro);
+          break;
         }
       }
     }
   }
 
-  percorrer(objeto)
-
-  return erros
+  return errosEncontrados;
 }
+
+
+/*
+================================================================================
+of em um for significa "para cada elemento dentro de"
+as em uma atribuição, fala para o sistema tratar esse valor como tal objeto, em valor as ObjetoGenerico, eu falo "analise esse valor como o objeto generico"
+================================================================================
+
+type ObjetoGenerico = Record<string, unknown>
+"ObjetoGenerico é um objeto onde todas as chaves são strings e os valores podem ser qualquer coisa (unknown)”
+
+export function validarObjeto(objetoDesconhecido: unknown): ListaDeErros {
+// Em type script o que vem depois dos dois pontos significa o retorno dessa função.
+
+if (typeof valorAtual !== 'object' || valorAtual === null) return
+// vai embora se o valorAtual n for um objeto ou null
+
+const objetoAtual = valorAtual as ObjetoGenerico
+// objetoAtual recebe o mesmo valor de valorAtual, mas agora tipado como ObjetoGenerico
+
+for (const chaveAtual of Object.keys(objetoAtual)) {
+// Para cada chave dentro do objeto objetoAtual
+
+const caminhoCompleto = [...caminhoPercorrido, chaveAtual]
+// Cria um novo array com tudo que já estava em caminhoPercorrido + a chaveAtual no final
+
+const regrasDoCampo = (regras as ObjetoGenerico)[chaveAtual] as
+| Array<(valorParam: unknown, objetoOriginal?: unknown) => true | string>
+| undefined
+// Pega dentro de regras o valor da chave atual, tratando como um objeto,
+// e considera que isso é um array de regras ou pode não existir
+
+
+| → TypeScript (tipos) → “OU de tipos”
+|| → JavaScript (execução) → “OU lógico”
+
+const regrasDoCampo =
+  (regras as ObjetoGenerico)[chaveAtual] as
+  | Array<(valorParam: unknown, objetoOriginal?: unknown) => true | string>
+  | undefined
+
+isso é uma maneira mais "cool" de se escrever
+
+veja dentro desse array se tem uma regra para essa variavel!
+================================================================================
+*/

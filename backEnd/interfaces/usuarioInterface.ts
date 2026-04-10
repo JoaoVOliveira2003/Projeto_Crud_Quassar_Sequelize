@@ -5,6 +5,7 @@ export interface DadosUsuario {
   peso: number;
   altura: number;
   endereco: {
+    id_usuario : number,
     rua: string;
     numero: number;
     cod_cidade: number;
@@ -21,6 +22,7 @@ export interface Usuario {
   numero?: number;
   cidadeSelecionada?: number;
   endereco?: Array<{
+    id_usuario : number,
     rua: string;
     numero: number;
     cod_cidade: number;

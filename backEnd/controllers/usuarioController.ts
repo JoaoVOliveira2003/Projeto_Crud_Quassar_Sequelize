@@ -31,7 +31,7 @@ export namespace usuarioController {
 
   export async function deletarUsuario(req: Request, res: Response) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
 
       const retorno = await deletarUsuarioService(id);
 
@@ -47,7 +47,7 @@ export namespace usuarioController {
 
   export async function atualizarUsuario(req: Request, res: Response) {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
       const usuario = req.body.usuario;
 
       const retorno = await atualizarUsuarioService(id, usuario);

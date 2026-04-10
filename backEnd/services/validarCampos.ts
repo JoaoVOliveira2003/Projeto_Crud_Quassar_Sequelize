@@ -2,6 +2,7 @@ export function validarGenerico(dados: any): true | string[] {
   const erros: string[] = [];
 
   function percorrer(obj: any, caminho: string[] = []) {
+    
     for (const chave of Object.keys(obj)) {
       const valor = obj[chave];
       const caminhoCompleto = [...caminho, chave];
