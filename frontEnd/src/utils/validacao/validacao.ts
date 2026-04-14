@@ -27,6 +27,7 @@ export function validarObjeto(objetoDesconhecido: unknown,caminhoPercorrido: str
 
     // Verificar regras do campo
     const regrasDoCampo = (regras as ObjetoGenerico)[chaveAtual] as
+    // eslint-disable-next-line 
       | Array<(valorParam: unknown, objetoOriginal?: unknown) => true | string>
       | undefined;
 

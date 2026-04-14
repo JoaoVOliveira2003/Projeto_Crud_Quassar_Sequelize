@@ -1,5 +1,6 @@
 
 //qualquer função usada aqui tem que receber valor e retornar true ou string
+// eslint-disable-next-line 
 type FuncaoRegra = (valor: unknown) => true | string;
 
 //Define um objeto onde cada chave (string) tem uma lista de funções de validação (FuncaoRegra[])

@@ -2,7 +2,8 @@ import { DataTypes } from "sequelize";
 import { conecta } from "../config/conecta";
 import { EnderecoSchema } from "./endereco-schema.js";
 import { CidadeSchema } from "./cidade-shema.js";
-import {DadosUsuario} from "../interfaces/usuarioInterface"
+import { DadosUsuario } from "../interfaces/usuarioInterface"
+import { LoginSchema  } from "./login-schema.js";
 
 export const UsuarioSchema = conecta.define("Usuario", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -16,6 +17,10 @@ export const UsuarioSchema = conecta.define("Usuario", {
   this.hasMany(schema.EnderecoSchema, {
     foreignKey: "id_usuario",
     as: "endereco",
+  });
+  this.hasMany(schema.LoginSchema, {
+    foreignKey: "id_usuario", 
+    as: "logins",
   });
 };
 
@@ -39,6 +44,7 @@ export class UsuarioQuery {
             ],
           },
         ],
+        order:[['id','desc']]
       });
     } catch (error) {
       return error;

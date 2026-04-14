@@ -4,4 +4,3 @@ export async function getTodosUsuarios(usuario_query: UsuarioQuery = new Usuario
   const usuarios = await usuario_query.getUsuarios();
   return usuarios;
 }
-

@@ -9,6 +9,10 @@ export interface DadosUsuario {
     numero: number | null;
     cod_cidade: number | null;
   };
+  cadastro:{
+    email: string;
+    senha: string;
+  }
 }
 
 export interface Usuario {
