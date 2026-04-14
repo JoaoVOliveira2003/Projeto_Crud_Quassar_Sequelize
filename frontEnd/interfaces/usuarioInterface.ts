@@ -9,7 +9,7 @@ export interface DadosUsuario {
     numero: number | null;
     cod_cidade: number | null;
   };
-  cadastro:{
+  login:{
     email: string;
     senha: string;
   }

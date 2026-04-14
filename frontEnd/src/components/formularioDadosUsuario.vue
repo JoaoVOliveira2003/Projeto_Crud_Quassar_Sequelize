@@ -60,10 +60,10 @@ import CidadeSelect from '../components/cidadeSelect.vue';
 import { criarUsuario } from '../../services/Usuarios/criarUsuarioService';
 import { validarObjeto } from 'src/utils/validacao/validacao'
 import { ref, reactive } from 'vue';
-const formRef = ref();
-const emit = defineEmits(['usuarioCriado']);
 import type { DadosUsuario } from '../../interfaces/usuarioInterface'
 
+const formRef = ref();
+const emit = defineEmits(['usuarioCriado']);
 
 const estadoInicial = {
   nome: '',
@@ -72,7 +72,9 @@ const estadoInicial = {
   altura: null,
   rua: '',
   numero: null,
-  cidadeSelecionada: null
+  cidadeSelecionada: null,
+  email:'',
+  senha:''
 };
 
 const formularioPrincipal = reactive({
@@ -82,7 +84,9 @@ const formularioPrincipal = reactive({
   altura: null as number | null,
   rua: '',
   numero: null as number | null,
-  cidadeSelecionada: null as number | null
+  cidadeSelecionada: null as number | null,
+  email:'',
+  senha:''
 });
 
 async function createUsuarioTodosDados() {
@@ -98,7 +102,7 @@ async function createUsuarioTodosDados() {
       numero: formularioPrincipal.numero,
       cod_cidade: formularioPrincipal.cidadeSelecionada
     },
-    cadastro:{
+    login:{
      email: formularioPrincipal.email,
      senha: formularioPrincipal.senha,
     }

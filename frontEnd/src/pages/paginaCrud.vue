@@ -46,9 +46,6 @@ import { ref,  onMounted } from 'vue';
 
 import type { DadosUsuario, Usuario } from '../../interfaces/usuarioInterface'
 
-
-
-
 const usuarioParaEditar = ref<Usuario | null>(null);
 
 const usuarios = ref<Usuario[]>([]);
@@ -65,17 +62,9 @@ const colunas: QTableColumn[] = [
   { name: 'acoes', label: 'Ações', align: 'center', field: () => '' }
 ];
 
-
-
 onMounted(async () => {
   usuarios.value = await carregarUsuarios();
 });
-
-
-
-
-
-
 
 async function atualizarUsuario(dados: Usuario) {
   const dadosCorretos: DadosUsuario = {

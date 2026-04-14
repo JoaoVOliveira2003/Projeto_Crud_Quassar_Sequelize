@@ -11,6 +11,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/paginaLogin.vue') }],
   },
+  {
+    path: '/cadastro',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/paginaRegistro.vue') }],
+  },
 ];
 
 export default routes;

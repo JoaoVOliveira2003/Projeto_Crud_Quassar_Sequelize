@@ -37,6 +37,5 @@
 
   onMounted(async () => {
     cidades.value = await listarCidadeService()
-    console.log('oei')
   })
 </script>

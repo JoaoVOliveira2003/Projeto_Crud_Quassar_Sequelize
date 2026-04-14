@@ -10,4 +10,9 @@ export interface DadosUsuario {
     numero: number;
     cod_cidade: number;
   };
+  login:{
+    id_usuario? : number,
+    email: string;
+    senha: string;
+  }
 }
