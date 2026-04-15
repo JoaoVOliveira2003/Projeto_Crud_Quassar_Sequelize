@@ -2,7 +2,6 @@ import { fn, col, DataTypes } from "sequelize";
 import { conecta } from "../config/conecta";
 import { UsuarioSchema } from "./usuario-schema";
 
-
 export const LoginSchema = conecta.define(
   "Login",
   {
@@ -40,24 +39,29 @@ export class LoginQuery {
     }
   }
 
-async realizarLogin(login: any) {
-  try {
-
-    const result = await LoginSchema.findAll({
-      attributes: ["id_usuario", [fn("COUNT", col("*")), "total"]],
-      where: {
-        email: login.email,
-        senha: login.senha,
-      },
-      group: ["id_usuario"],
-      raw: true
-    });
-    return result;
-
-  } catch (error) {
-    console.log("ERRO:", error);
-    throw error;
+  async realizarLogin(login: any) {
+    try {
+      const result = await LoginSchema.findAll({
+        attributes: ["id_usuario", [fn("COUNT", col("*")), "total"]],
+        where: {
+          email: login.email,
+          senha: login.senha,
+        },
+        group: ["id_usuario"],
+        raw: true,
+      });
+      return result;
+    } catch (error) {
+      console.log("ERRO:", error);
+      throw error;
+    }
   }
-}
 
+  async deletarLogin(id: number) {
+    try {
+      return LoginSchema.destroy({where: { id_usuario: id },});
+    } catch (error) {
+      throw error;
+    }
+  }
 }

@@ -4,6 +4,7 @@ export interface DadosUsuario {
   dataDeNascimento: string;
   peso: number;
   altura: number;
+  criadoPor?: number;
   endereco: {
     id_usuario? : number,
     rua: string;

@@ -1,4 +1,7 @@
 <template>
+
+  <botaoLogout />
+
   <div class="q-pa-md" style="max-width: 600px; margin: auto;">
     <h4 class="flex flex-center q-my-none">Inserir novo usuario </h4>
     <hr/>
@@ -36,10 +39,12 @@ import type { QTableColumn } from 'quasar';
 import ModalDeletar from '../components/modalDeletar.vue';
 import ModalEditar from '../components/modalEditar.vue';
 import formularioDadosUsuario from '../components/formularioDadosUsuario.vue';
+import botaoLogout from '../components/botaoLogout.vue'
 
 import { carregarUsuarios } from '../../services/Usuarios/listarUsuarioService';
 import { atualizarUsuarioService } from '../../services/Usuarios/atualizarUsuarioService';
 import { deletarUsuario } from '../../services/Usuarios/deletarUsuarioService';
+
 
 import type { DadosUsuario, Usuario } from '../../interfaces/usuarioInterface';
 
@@ -143,5 +148,6 @@ function abrirModalDeletar(row: Usuario) {
   usuarioParaDeletar.value = row;
   modalDeletarAberto.value = true;
 }
+
 
 </script>

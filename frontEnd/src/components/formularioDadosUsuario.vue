@@ -42,7 +42,7 @@
       </div>
 
       <div class="col">
-        <q-input lazy-rules filled v-model.number="formularioPrincipal.senha" label="Senha" type="password" clearable
+        <q-input lazy-rules filled v-model="formularioPrincipal.senha" label="Senha" type="password" clearable
           hide-bottom-space :rules="regras.senha" />
       </div>
     </div>

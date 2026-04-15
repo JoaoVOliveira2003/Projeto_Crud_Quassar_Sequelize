@@ -11,6 +11,7 @@ export const UsuarioSchema = conecta.define("Usuario", {
   dataDeNascimento: { type: DataTypes.DATE, allowNull: true },
   peso: { type: DataTypes.INTEGER, allowNull: true },
   altura: { type: DataTypes.FLOAT, allowNull: true },
+  criadoPor: {type: DataTypes.INTEGER, allowNull: true}
 });
 
 (UsuarioSchema as any).associate = function (schema : any) {

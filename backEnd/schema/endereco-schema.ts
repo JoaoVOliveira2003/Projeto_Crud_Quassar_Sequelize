@@ -44,7 +44,7 @@ export class EnderecoQuery {
 
   async deletarEndereco(id : number) {
     try {
-      return EnderecoSchema.destroy({ where: { id } });
+      return EnderecoSchema.destroy({where: { id_usuario: id },});
     } catch (error) {
       throw error;
     }

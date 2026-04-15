@@ -3,6 +3,7 @@ import { getTodosUsuarios } from "../services/usuarioService";
 import { salvarUsuario } from "../services/usuario-salvar-service";
 import { deletarUsuarioService } from "../services/usuario-deletar-service";
 import { atualizarUsuarioService } from "../services/usuario-atualizar-service";
+import jwt from 'jsonwebtoken';
 
 export namespace usuarioController {
   export async function getUsuarios(req: Request, res: Response) {
@@ -17,7 +18,14 @@ export namespace usuarioController {
 
   export async function gravarUsuario(req: Request, res: Response) {
     try {
-      const usuario = req.body.usuario;
+      let usuario = req.body.usuario;
+
+      const authHeader = req.headers.authorization;
+      const token = authHeader?.split(' ')[1];
+      const dados = jwt.verify(token, 'segredoSecreto');
+
+     usuario = {...usuario,criadoPor: dados.id_usuario};
+
       const retorno = await salvarUsuario(usuario);
       res.json(retorno.toJSON());
     } catch (error: any) {
