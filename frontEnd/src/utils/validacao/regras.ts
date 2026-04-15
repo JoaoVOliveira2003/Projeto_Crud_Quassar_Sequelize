@@ -32,5 +32,13 @@ export const regras: Record<string, FuncaoRegra[]> = {
   ],
   cidadeSelecionada:[
     (valor) => valor !== null && valor !== undefined || 'Nescessario preencher alguma cidade',
+  ],
+  email:[
+    (valor) => valor !== null && valor !== undefined || 'Email obrigatoria',
+    (valor) => typeof valor === 'string' && valor.length >= 3 || 'Email deve ter mais de caracteres'
+  ],
+  senha:[
+    (valor) => valor !== null && valor !== undefined || 'Senha obrigatoria',
+    (valor) => typeof valor === 'string' && valor.length >= 3 || 'Senha deve ter mais de caracteres'
   ]
 };

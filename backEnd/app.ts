@@ -7,6 +7,7 @@ import { LoginSchema} from './schema/login-schema.ts';
 import { EnderecoSchema } from "./schema/endereco-schema.ts";
 import { routerUsuarios } from "./routes/usuarios.ts";
 import { routerCidades  } from "./routes/cidades.ts";
+import { routerLogin } from "./routes/login.ts";
 
 
 const app = express();
@@ -23,5 +24,6 @@ const db = { UsuarioSchema, EnderecoSchema, CidadeSchema,LoginSchema };
 
 app.use("/usuario", routerUsuarios);
 app.use("/cidade", routerCidades);
+app.use("/login/",routerLogin);
 
 export default app;

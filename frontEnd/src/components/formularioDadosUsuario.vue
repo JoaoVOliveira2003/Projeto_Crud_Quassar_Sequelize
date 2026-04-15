@@ -48,7 +48,8 @@
     </div>
 
     <div class="q-mt-md">
-      <q-btn color="secondary" label="Gravar" type="submit" />
+      <q-btn v-if="botaoVoltar"  label="Tela de login" color="secondary" class="q-mr-xs" to="/login"/>
+      <q-btn color="secondary"  label="Gravar"  type="submit" />
     </div>
 
   </q-form>
@@ -64,6 +65,10 @@ import type { DadosUsuario } from '../../interfaces/usuarioInterface'
 
 const formRef = ref();
 const emit = defineEmits(['usuarioCriado']);
+
+defineProps({
+  botaoVoltar: Boolean
+})
 
 const estadoInicial = {
   nome: '',
@@ -137,4 +142,6 @@ function limparFormularioPrincipal() {
 function limparCampoPeso(event: KeyboardEvent) {
   if (event.key === ',' || event.key === '.' || !/[0-9]/.test(event.key)) event.preventDefault();
 }
+
+
 </script>

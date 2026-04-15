@@ -1,4 +1,4 @@
-export interface loginInterdace{
+export interface loginInterface{
   email: string;
   senha: string;
 }

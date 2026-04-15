@@ -5,7 +5,6 @@
     
     <formularioDadosUsuario @usuarioCriado="atualizarFormulario"/>
 
-    <!-- Tabela de usuários -->
     <q-table title="Usuários" :rows="usuarios" :columns="colunas" row-key="id">
       <template v-slot:body-cell-acoes="props">
         <q-td align="center">
@@ -19,15 +18,8 @@
       </template>
     </q-table>
 
-    <!-- Modal de edição -->
     <ModalEditar v-model:modeloAberto="modalAberto" :usuario="usuarioParaEditar" @salvar="atualizarUsuario" />
-
-
-    <!-- Modal de deletar -->
-    <ModalDeletar v-model:modeloAberto="modalDeletarAberto" :usuario="usuarioParaDeletar"
-      @confirmarDelete="confirmarDelete" />
-
-
+    <ModalDeletar v-model:modeloAberto="modalDeletarAberto" :usuario="usuarioParaDeletar"  @confirmarDelete="confirmarDelete" />
   </div>
 </template>
 
