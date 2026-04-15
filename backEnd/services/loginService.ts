@@ -1,19 +1,31 @@
 import { LoginQuery } from "../schema/login-schema";
-import {loginInterface} from '../interfaces/loginInterface'
-import jwt from 'jsonwebtoken';
+import { loginInterface } from "../interfaces/loginInterface";
+import jwt from "jsonwebtoken";
 
 export async function comprovarLogin(
-    login:loginInterface,
-    login_query: LoginQuery = new LoginQuery(),
-)
-{
-const resultado = await login_query.realizarLogin(login);
+  login: loginInterface,
+  login_query: LoginQuery = new LoginQuery(),
+) {
+  const resultado = await login_query.realizarLogin(login);
 
-if(resultado.length === 0){
-    return 0;
-}
+  if (resultado.length === 0) {
+    return null;
+  }
 
-return 1;
+  const usuario = resultado[0];
+
+  const token = jwt.sign(
+    {
+      id_usuario: usuario.id_usuario,
+    },
+    "segredoSecreto",
+    {
+      expiresIn: "1h",
+    },
+  );
+
+  return token;
+  
 }
 
 // const usuario = await login_query.realizarLogin(login);

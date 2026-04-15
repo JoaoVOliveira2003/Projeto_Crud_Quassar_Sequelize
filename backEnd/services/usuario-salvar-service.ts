@@ -27,9 +27,7 @@ export async function salvarUsuario(
     
     const login = usuario.login;
     login.id_usuario = usuarioObj.id; 
-        console.log('-------------')
-    console.log(login)
-    console.log('-------------')
+
     usuarioObj.login = await login_query.criarLogin(login);
 
     return usuarioObj;

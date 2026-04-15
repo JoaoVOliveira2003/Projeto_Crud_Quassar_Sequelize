@@ -1,10 +1,10 @@
 <template>
   <div class="q-pa-md" style="max-width: 600px; margin: auto;">
-    <h4 class="flex flex-center q-my-none">Dados de usuario</h4>
+    <h4 class="flex flex-center q-my-none">Inserir novo usuario </h4>
     <hr/>
     
     <formularioDadosUsuario @usuarioCriado="atualizarFormulario"/>
-
+    <br>
     <q-table title="Usuários" :rows="usuarios" :columns="colunas" row-key="id">
       <template v-slot:body-cell-acoes="props">
         <q-td align="center">
@@ -21,9 +21,16 @@
     <ModalEditar v-model:modeloAberto="modalAberto" :usuario="usuarioParaEditar" @salvar="atualizarUsuario" />
     <ModalDeletar v-model:modeloAberto="modalDeletarAberto" :usuario="usuarioParaDeletar"  @confirmarDelete="confirmarDelete" />
   </div>
+
+Tempo ->{{ tempoRestante }} <br>
+id ->{{ valorId }}
 </template>
 
+
 <script setup lang="ts">
+
+import { ref, onMounted } from 'vue';
+import { jwtDecode } from 'jwt-decode';
 import type { QTableColumn } from 'quasar';
 
 import ModalDeletar from '../components/modalDeletar.vue';
@@ -34,18 +41,23 @@ import { carregarUsuarios } from '../../services/Usuarios/listarUsuarioService';
 import { atualizarUsuarioService } from '../../services/Usuarios/atualizarUsuarioService';
 import { deletarUsuario } from '../../services/Usuarios/deletarUsuarioService';
 
-import { ref,  onMounted } from 'vue';
+import type { DadosUsuario, Usuario } from '../../interfaces/usuarioInterface';
 
-import type { DadosUsuario, Usuario } from '../../interfaces/usuarioInterface'
+type TokenPayload = {
+  id_usuario: number;
+  exp: number;
+};
 
-const usuarioParaEditar = ref<Usuario | null>(null);
+
+const valorId = ref<number | null>(null);
+const tempoRestante = ref("");
 
 const usuarios = ref<Usuario[]>([]);
+const usuarioParaEditar = ref<Usuario | null>(null);
 const usuarioParaDeletar = ref<Usuario | null>(null);
 
 const modalAberto = ref(false);
 const modalDeletarAberto = ref(false);
-
 
 
 const colunas: QTableColumn[] = [
@@ -54,9 +66,32 @@ const colunas: QTableColumn[] = [
   { name: 'acoes', label: 'Ações', align: 'center', field: () => '' }
 ];
 
+
+const token = localStorage.getItem('token');
+
+if (token) {
+  try {
+    const decoded = jwtDecode<TokenPayload>(token);
+    valorId.value = decoded.id_usuario;
+
+    const agora = Math.floor(Date.now() / 1000);
+    const restante = decoded.exp - agora;
+
+    tempoRestante.value = restante + " segundos";
+  } catch {
+    console.log('Token inválido');
+  }
+}
+
+
 onMounted(async () => {
   usuarios.value = await carregarUsuarios();
 });
+
+
+async function atualizarFormulario() {
+  usuarios.value = await carregarUsuarios();
+}
 
 async function atualizarUsuario(dados: Usuario) {
   const dadosCorretos: DadosUsuario = {
@@ -84,10 +119,6 @@ async function atualizarUsuario(dados: Usuario) {
   }
 }
 
-async function atualizarFormulario() {
-  usuarios.value = await carregarUsuarios();
-}
-
 async function confirmarDelete() {
   if (!usuarioParaDeletar.value) return;
 
@@ -112,7 +143,5 @@ function abrirModalDeletar(row: Usuario) {
   usuarioParaDeletar.value = row;
   modalDeletarAberto.value = true;
 }
-
-
 
 </script>

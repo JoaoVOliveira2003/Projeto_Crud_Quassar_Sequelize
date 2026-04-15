@@ -50,8 +50,8 @@ async realizarLogin(login: any) {
         senha: login.senha,
       },
       group: ["id_usuario"],
+      raw: true
     });
-    console.log(result)
     return result;
 
   } catch (error) {

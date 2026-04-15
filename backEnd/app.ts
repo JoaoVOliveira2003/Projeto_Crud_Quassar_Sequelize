@@ -9,7 +9,6 @@ import { routerUsuarios } from "./routes/usuarios.ts";
 import { routerCidades  } from "./routes/cidades.ts";
 import { routerLogin } from "./routes/login.ts";
 
-
 const app = express();
 app.use(cors());
 app.use(express.json());

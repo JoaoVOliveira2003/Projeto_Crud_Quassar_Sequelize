@@ -28,6 +28,8 @@ import type { loginInterface } from '../../interfaces/loginInterface'
 import { login } from '../../services/Login/realizarLogin'
 import { useRouter } from 'vue-router'
 const router = useRouter()
+import axios from 'axios';
+
 
 const formulario = reactive({
     email: '',
@@ -42,16 +44,24 @@ async function realizarLogin() {
     }
 
     try {
-        const res = await login(dadosLogin);
-        if (res == 0) {
-            alert('Senha ou Email incorreto');
+        const res   = await login(dadosLogin);
+        const token = res.token;
+
+        if (!token) {
+            alert('Senha ou email incorretos');
+            return;
         }
-        else if (res == 1) {
-            router.push('/')
-        }
+
+        localStorage.setItem('token', token);
+
+        router.push('/');
     }
     catch (error) {
-        alert(error);
+        if (axios.isAxiosError(error)) {
+            alert(error.response?.data?.erro || 'Erro na requisição');
+        } else {
+            alert('Erro inesperado');
+        }
     }
 }
 
