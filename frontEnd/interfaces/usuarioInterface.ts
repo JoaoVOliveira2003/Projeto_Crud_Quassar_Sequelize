@@ -11,7 +11,7 @@ export interface DadosUsuario {
   };
   login:{
     email: string;
-    senha: string;
+    senha?: string;
   }
 }
 
@@ -29,8 +29,8 @@ export interface Usuario {
     numero: number;
     cod_cidade: number;
   }>;
-  login:Array<{
-    email: string;
-    senha: string;
-  }>;
+login: {
+  email: string;
+  novaSenha: string;
+}
 }

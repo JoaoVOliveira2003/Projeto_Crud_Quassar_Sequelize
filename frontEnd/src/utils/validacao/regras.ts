@@ -35,10 +35,13 @@ export const regras: Record<string, FuncaoRegra[]> = {
   ],
   email:[
     (valor) => valor !== null && valor !== undefined || 'Email obrigatoria',
-    (valor) => typeof valor === 'string' && valor.length >= 3 || 'Email deve ter mais que tres'
+    (valor) => typeof valor === 'string' && valor.length >= 3 || 'Email deve ter mais que tres caracteres'
   ],
   senha:[
     (valor) => valor !== null && valor !== undefined || 'Senha obrigatoria',
-    (valor) => typeof valor === 'string' && valor.length >= 3 || 'Senha deve ter mais que tres'
+    (valor) => typeof valor === 'string' && valor.length >= 3 || 'Senha deve ter mais que tres caracteres'
+  ],
+  novaSenha:[
+  (valor) => !valor || (typeof valor === 'string' && valor.length >= 3) || 'Nova senha deve ter mais que três caracteres'
   ]
 };

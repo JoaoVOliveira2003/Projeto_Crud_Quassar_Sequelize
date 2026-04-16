@@ -9,8 +9,9 @@
             <div style="width: 300px;">
                 <h4>Login</h4>
                 <q-form filled greedy @submit.prevent="realizarLogin()">
-                    <q-input v-model="formulario.email" label="Email" />
-                    <q-input v-model="formulario.senha" label="Senha" />
+                    <q-input filled class="q-mb-sm" v-model="formulario.email" label="Email" />
+                    <InputSenha  v-model="formulario.senha" label="Senha"/>                      
+
                     <q-btn label="Entrar" color="primary" class="full-width q-mt-md" type="submit" />
                     <div class="text-center q-mt-md">
                         <router-link to="/cadastro">Não possuo conta</router-link>
@@ -29,6 +30,7 @@ import { login } from '../../services/Login/realizarLogin'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 import axios from 'axios';
+import InputSenha from '../components/inputSenha.vue'
 
 
 const formulario = reactive({

@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { getTodosUsuarios } from "../services/usuarioService";
+import { getTodosUsuarios } from "../services/usuario-get-service";
 import { salvarUsuario } from "../services/usuario-salvar-service";
 import { deletarUsuarioService } from "../services/usuario-deletar-service";
 import { atualizarUsuarioService } from "../services/usuario-atualizar-service";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 export namespace usuarioController {
   export async function getUsuarios(req: Request, res: Response) {
@@ -21,10 +21,16 @@ export namespace usuarioController {
       let usuario = req.body.usuario;
 
       const authHeader = req.headers.authorization;
-      const token = authHeader?.split(' ')[1];
-      const dados = jwt.verify(token, 'segredoSecreto');
+      const token = authHeader?.split(" ")[1];
 
-     usuario = {...usuario,criadoPor: dados.id_usuario};
+      let id_usuario = 0;
+
+      if (token) {
+        const dados = jwt.verify(token, "segredoSecreto") as any;
+        id_usuario = dados.id_usuario;
+      }
+
+      usuario = { ...usuario, criadoPor: id_usuario };
 
       const retorno = await salvarUsuario(usuario);
       res.json(retorno.toJSON());
@@ -32,7 +38,10 @@ export namespace usuarioController {
       console.error(error);
       res
         .status(500)
-        .json({erro: "Erro ao criar usuário com endereço",detalhes: error.message,});
+        .json({
+          erro: "Erro ao criar usuário com endereço",
+          detalhes: error.message,
+        });
     }
   }
 
@@ -56,7 +65,7 @@ export namespace usuarioController {
       const usuario = req.body.usuario;
 
       const retorno = await atualizarUsuarioService(id, usuario);
-      
+
       res.json(retorno);
     } catch (error: any) {
       console.error(error);

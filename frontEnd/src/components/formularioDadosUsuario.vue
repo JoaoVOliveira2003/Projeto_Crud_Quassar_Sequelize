@@ -42,8 +42,9 @@
       </div>
 
       <div class="col">
-        <q-input lazy-rules filled v-model="formularioPrincipal.senha" label="Senha" type="password" clearable
-          hide-bottom-space :rules="regras.senha" />
+        <!-- <q-input lazy-rules filled v-model="formularioPrincipal.senha" label="Senha" type="password" clearable hide-bottom-space :rules="regras.senha" /> -->
+      <InputSenha  v-model="formularioPrincipal.senha" label="Senha" :rules="regras.senha"/>                      
+
       </div>
     </div>
 
@@ -62,6 +63,7 @@ import { criarUsuario } from '../../services/Usuarios/criarUsuarioService';
 import { validarObjeto } from 'src/utils/validacao/validacao'
 import { ref, reactive } from 'vue';
 import type { DadosUsuario } from '../../interfaces/usuarioInterface'
+import InputSenha from './inputSenha.vue'
 
 const formRef = ref();
 const emit = defineEmits(['usuarioCriado']);

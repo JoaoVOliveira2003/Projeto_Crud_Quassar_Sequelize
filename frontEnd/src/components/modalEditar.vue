@@ -49,7 +49,9 @@
                         </div>
 
                         <div class="col">
-                            <q-input filled v-model="formularioLocal.senha" label="Senha" type="password" class="bordered q-mb-sm" clearable hide-bottom-space lazy-rules :rules="regras.senha" />
+
+                        <InputSenha  v-model="formularioLocal.novaSenha" label="Nova senha(opcional)" :rules="regras.novaSenha"/>                      
+                      
                         </div>
                     </div>
 
@@ -70,7 +72,7 @@ import CidadeSelect from './cidadeSelect.vue'
 import type { DadosUsuario, Usuario } from '../../interfaces/usuarioInterface'
 import { regras } from 'src/utils/validacao/regras'
 import { validarObjeto } from 'src/utils/validacao/validacao'
-
+import InputSenha from './inputSenha.vue'
 
 const props = defineProps<{
     modeloAberto: boolean,
@@ -99,7 +101,7 @@ const formularioLocal = reactive({
     numero: 0,
     cidadeSelecionada: 0,
     email: '',
-    senha: '',
+    novaSenha: '',
 })
 
 //observar mudanças em uma variável
@@ -110,11 +112,11 @@ watch(() => props.modeloAberto, (abriu) => {
 })
 
 function preencherFormulario(usuario: Usuario) {
+
     const endereco = usuario.endereco?.[0]  
     const login = usuario.login?.[0]
 
     formularioLocal.email = login?.email || ''
-    formularioLocal.senha = login?.senha || ''
     formularioLocal.id = usuario.id
     formularioLocal.nome = usuario.nome
     formularioLocal.peso = usuario.peso
@@ -134,6 +136,8 @@ function limparModal() {
     formularioLocal.rua = ''
     formularioLocal.numero = 0
     formularioLocal.cidadeSelecionada = 0
+    formularioLocal.email = ''
+    formularioLocal.senha = ''
 }
 
 async function validarAntesSalvar() {
@@ -154,6 +158,10 @@ async function validarAntesSalvar() {
             rua: formularioLocal.rua,
             numero: formularioLocal.numero,
             cod_cidade: formularioLocal.cidadeSelecionada
+        },
+        login:{
+            email:formularioLocal.email,
+            novaSenha: formularioLocal.novaSenha
         }
     }
 

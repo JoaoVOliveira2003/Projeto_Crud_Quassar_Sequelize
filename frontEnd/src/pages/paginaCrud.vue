@@ -96,9 +96,11 @@ onMounted(async () => {
 
 async function atualizarFormulario() {
   usuarios.value = await carregarUsuarios();
+
 }
 
 async function atualizarUsuario(dados: Usuario) {
+
   const dadosCorretos: DadosUsuario = {
     id: dados.id,
     nome: dados.nome,
@@ -109,6 +111,10 @@ async function atualizarUsuario(dados: Usuario) {
       rua: dados.endereco?.[0]?.rua || dados.rua!,
       numero: dados.endereco?.[0]?.numero || dados.numero!,
       cod_cidade: dados.endereco?.[0]?.cod_cidade || dados.cidadeSelecionada!
+    },
+    login: {
+      email: dados.login?.email,
+      ...(dados.login?.novaSenha && { senha: dados.login.novaSenha })
     }
   };
 

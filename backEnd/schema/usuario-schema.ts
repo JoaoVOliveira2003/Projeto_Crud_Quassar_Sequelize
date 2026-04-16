@@ -21,7 +21,7 @@ export const UsuarioSchema = conecta.define("Usuario", {
   });
   this.hasMany(schema.LoginSchema, {
     foreignKey: "id_usuario", 
-    as: "logins",
+    as: "login",
   });
 };
 
@@ -30,27 +30,35 @@ export class UsuarioQuery {
     return UsuarioSchema;
   }
 
-  async getUsuarios() {
-    try {
-      return await UsuarioSchema.findAll({
-        include: [
-          {
-            model: EnderecoSchema,
-            as: "endereco",
-            include: [
-              {
-                model: CidadeSchema,
-                as: "cidade",
-              },
-            ],
-          },
-        ],
-        order:[['id','desc']]
-      });
-    } catch (error) {
-      return error;
-    }
+async getUsuarios() {
+  try {
+    return await UsuarioSchema.findAll({
+      include: [
+        {
+          model: EnderecoSchema,
+          as: "endereco",
+          required: true, 
+          include: [
+            {
+              model: CidadeSchema,
+              as: "cidade",
+              required: true, 
+            },
+          ],
+        },
+        {
+          model: LoginSchema,
+          as: "login",
+          attributes: ['email'],
+          required: true
+        },
+      ],
+      order: [['id', 'desc']]
+    });
+  } catch (error) {
+    return error;
   }
+}
 
   async criarUsuario(usuario : DadosUsuario) {
     try {

@@ -1,7 +1,7 @@
 import { UsuarioQuery } from "../schema/usuario-schema.ts";
 import { EnderecoQuery} from "../schema/endereco-schema.ts";
 import { LoginQuery } from "../schema/login-schema.ts";
-import {validarGenerico} from "./validarCampos"
+import {validarGenerico} from "./validar-campos-service.ts"
 import {DadosUsuario} from "../interfaces/usuarioInterface.ts"
 import CryptoJS from "crypto-js";
 
@@ -27,13 +27,6 @@ export async function salvarUsuario(
     usuarioObj.endereco = await endereco_query.criarEndereco(endereco);
       
     const login = usuario.login;
-    
-
-    
-    console.log("senha:", login.senha);
-    console.log("secret:", process.env.CRYPTO_SECRET);
-
-
 
     login.senha = CryptoJS.HmacSHA256(login.senha, process.env.CRYPTO_SECRET!).toString();
 

@@ -1,6 +1,7 @@
 import { fn, col, DataTypes } from "sequelize";
 import { conecta } from "../config/conecta";
 import { UsuarioSchema } from "./usuario-schema";
+import { loginInterface } from "../interfaces/loginInterface";
 
 export const LoginSchema = conecta.define(
   "Login",
@@ -60,6 +61,15 @@ export class LoginQuery {
   async deletarLogin(id: number) {
     try {
       return LoginSchema.destroy({where: { id_usuario: id },});
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async atualizarLogin(id_usuario:number, login:loginInterface){
+    try {
+        const[linhasAfetadas] = await LoginSchema.update(login,{where:{id_usuario:id_usuario}})
+        return linhasAfetadas
     } catch (error) {
       throw error;
     }

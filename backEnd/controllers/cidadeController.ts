@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getCidades as getCidade} from "../services/cidadeService" ;
+import { getCidades as getCidade} from "../services/cidade-service" ;
 //versões antigas usavam module, agora é namespace
 export namespace  cidadeController{ 
   
