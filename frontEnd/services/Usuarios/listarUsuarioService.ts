@@ -1,11 +1,11 @@
-import axios from "axios";
+import api from '../../src/utils/apiConector'
 
-export  async function carregarUsuarios() {
-    try {
-      const res = await axios.get('http://localhost:3000/usuario');
-      return res.data;
-    } catch (error) {
-      console.error(error);
-      alert('Erro ao carregar usuários.');
-    }
+export async function carregarUsuarios() {
+  try {
+    const res = await api.get('/usuario');
+    return res.data;
+  } catch (error) {
+    console.error(error); 
+    throw error; 
   }
+}

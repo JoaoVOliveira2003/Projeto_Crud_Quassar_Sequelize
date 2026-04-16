@@ -24,11 +24,11 @@ export interface Usuario {
   rua?: string;
   numero?: number;
   cidadeSelecionada?: number;
-  endereco?: Array<{
+  endereco?: {
     rua: string;
     numero: number;
     cod_cidade: number;
-  }>;
+  };
 login: {
   email: string;
   novaSenha: string;

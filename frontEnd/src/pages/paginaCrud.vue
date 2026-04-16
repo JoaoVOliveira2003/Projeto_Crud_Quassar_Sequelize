@@ -4,9 +4,9 @@
 
   <div class="q-pa-md" style="max-width: 600px; margin: auto;">
     <h4 class="flex flex-center q-my-none">Inserir novo usuario </h4>
-    <hr/>
-    
-    <formularioDadosUsuario @usuarioCriado="atualizarFormulario"/>
+    <hr />
+
+    <formularioDadosUsuario @usuarioCriado="atualizarFormulario" />
     <br>
     <q-table title="Usuários" :rows="usuarios" :columns="colunas" row-key="id">
       <template v-slot:body-cell-acoes="props">
@@ -22,11 +22,12 @@
     </q-table>
 
     <ModalEditar v-model:modeloAberto="modalAberto" :usuario="usuarioParaEditar" @salvar="atualizarUsuario" />
-    <ModalDeletar v-model:modeloAberto="modalDeletarAberto" :usuario="usuarioParaDeletar"  @confirmarDelete="confirmarDelete" />
+    <ModalDeletar v-model:modeloAberto="modalDeletarAberto" :usuario="usuarioParaDeletar"
+      @confirmarDelete="confirmarDelete" />
   </div>
 
-Tempo ->{{ tempoRestante }} <br>
-id ->{{ valorId }}
+  Tempo ->{{ tempoRestante }} <br>
+  id ->{{ valorId }}
 </template>
 
 
@@ -108,10 +109,11 @@ async function atualizarUsuario(dados: Usuario) {
     peso: dados.peso,
     altura: dados.altura,
     endereco: {
-      rua: dados.endereco?.[0]?.rua || dados.rua!,
-      numero: dados.endereco?.[0]?.numero || dados.numero!,
-      cod_cidade: dados.endereco?.[0]?.cod_cidade || dados.cidadeSelecionada!
+      rua: dados.endereco?.rua ?? dados.rua!,
+      numero: dados.endereco?.numero ?? dados.numero!,
+      cod_cidade: dados.endereco?.cod_cidade ?? dados.cidadeSelecionada!
     },
+
     login: {
       email: dados.login?.email,
       ...(dados.login?.novaSenha && { senha: dados.login.novaSenha })
