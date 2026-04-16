@@ -10,7 +10,7 @@
                 <h4>Login</h4>
                 <q-form filled greedy @submit.prevent="realizarLogin()">
                     <q-input filled class="q-mb-sm" v-model="formulario.email" label="Email" />
-                    <InputSenha  v-model="formulario.senha" label="Senha"/>                      
+                    <InputSenha v-model="formulario.senha" label="Senha" />
 
                     <q-btn label="Entrar" color="primary" class="full-width q-mt-md" type="submit" />
                     <div class="text-center q-mt-md">
@@ -46,7 +46,7 @@ async function realizarLogin() {
     }
 
     try {
-        const res   = await login(dadosLogin);
+        const res = await login(dadosLogin);
         const token = res.token;
 
         if (!token) {
@@ -66,6 +66,4 @@ async function realizarLogin() {
         }
     }
 }
-
-
 </script>

@@ -74,6 +74,7 @@ const colunas: QTableColumn[] = [
 
 
 const token = localStorage.getItem('token');
+console.log(token);
 
 if (token) {
   try {
@@ -101,7 +102,6 @@ async function atualizarFormulario() {
 }
 
 async function atualizarUsuario(dados: Usuario) {
-
   const dadosCorretos: DadosUsuario = {
     id: dados.id,
     nome: dados.nome,

@@ -12,6 +12,7 @@ export async function salvarUsuario(
     login_query: LoginQuery = new LoginQuery()
 ) {
 
+    
     const resultado = validarGenerico(usuario);
     if (resultado !== true) {
         throw new Error(resultado.join(' | '));
