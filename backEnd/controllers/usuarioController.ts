@@ -56,6 +56,7 @@ export namespace usuarioController {
       const usuario = req.body.usuario;
 
       const retorno = await atualizarUsuarioService(id, usuario);
+      
       res.json(retorno);
     } catch (error: any) {
       console.error(error);

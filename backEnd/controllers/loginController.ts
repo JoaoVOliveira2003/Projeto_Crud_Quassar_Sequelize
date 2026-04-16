@@ -5,7 +5,6 @@ export namespace loginController{
     export async function testarLogin(_req:Request,res:Response){
         const login = _req.body.usuario;
         const token = await comprovarLogin(login);
-        console.log(token);
 
         if(!token){
             return res.status(401).json({erro:"Senha ou email incorretos"});

@@ -29,4 +29,8 @@ export interface Usuario {
     numero: number;
     cod_cidade: number;
   }>;
+  login:Array<{
+    email: string;
+    senha: string;
+  }>;
 }

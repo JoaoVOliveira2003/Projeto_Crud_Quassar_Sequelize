@@ -16,6 +16,8 @@ export async function atualizarUsuarioService(
     throw new Error(resultado.join(", "));
     }
 
+    console.log(usuario);
+
     await endereco_query.atualizarEndereco(id, usuario.endereco);
     await usuario_query.atualizarUsuario(id,usuario);
     

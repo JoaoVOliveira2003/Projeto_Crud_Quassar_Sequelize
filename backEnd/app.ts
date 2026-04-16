@@ -8,6 +8,7 @@ import { EnderecoSchema } from "./schema/endereco-schema.ts";
 import { routerUsuarios } from "./routes/usuarios.ts";
 import { routerCidades  } from "./routes/cidades.ts";
 import { routerLogin } from "./routes/login.ts";
+import "dotenv/config";
 
 const app = express();
 app.use(cors());
