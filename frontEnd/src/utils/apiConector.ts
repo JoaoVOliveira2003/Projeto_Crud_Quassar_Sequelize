@@ -11,7 +11,18 @@ api.interceptors.request.use((config)=>{
 })
 
 api.interceptors.response.use(
-  (response) => response,
+  
+  (response) => {
+    const novoToken = response.headers['authorization']?.split(' ')[1];
+
+    if(novoToken){
+      localStorage.setItem('token',novoToken);
+      api.defaults.headers.common['Authorization'] = `Bearer ${novoToken}`;
+
+    }
+    return response;
+  },
+
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');

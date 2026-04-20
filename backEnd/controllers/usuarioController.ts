@@ -16,34 +16,24 @@ export namespace usuarioController {
     }
   }
 
-  export async function gravarUsuario(req: Request, res: Response) {
-    try {
-      let usuario = req.body.usuario;
+export async function gravarUsuario(req: Request, res: Response) {
+  try {
+    let usuario = req.body.usuario;
 
-      const authHeader = req.headers.authorization;
-      const token = authHeader?.split(" ")[1];
+    const id_usuario = req.usuario?.id_usuario ?? 0;
 
-      let id_usuario = 0;
+    usuario = { ...usuario, criadoPor: id_usuario };
 
-      if (token) {
-        const dados = jwt.verify(token, "segredoSecreto") as any;
-        id_usuario = dados.id_usuario;
-      }
-
-      usuario = { ...usuario, criadoPor: id_usuario };
-
-      const retorno = await salvarUsuario(usuario);
-      res.json(retorno.toJSON());
-    } catch (error: any) {
-      console.error(error);
-      res
-        .status(500)
-        .json({
-          erro: "Erro ao criar usuário com endereço",
-          detalhes: error.message,
-        });
-    }
+    const retorno = await salvarUsuario(usuario);
+    res.json(retorno.toJSON());
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({
+      erro: "Erro ao criar usuário com endereço",
+      detalhes: error.message,
+    });
   }
+}
 
   export async function deletarUsuario(req: Request, res: Response) {
     try {

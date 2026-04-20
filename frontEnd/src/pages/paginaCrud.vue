@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue'; // ✅ adicionou onUnmounted
 import { jwtDecode } from 'jwt-decode';
 import type { QTableColumn } from 'quasar';
 
@@ -46,14 +46,12 @@ import { carregarUsuarios } from '../../services/Usuarios/listarUsuarioService';
 import { atualizarUsuarioService } from '../../services/Usuarios/atualizarUsuarioService';
 import { deletarUsuario } from '../../services/Usuarios/deletarUsuarioService';
 
-
 import type { DadosUsuario, Usuario } from '../../interfaces/usuarioInterface';
 
 type TokenPayload = {
   id_usuario: number;
   exp: number;
 };
-
 
 const valorId = ref<number | null>(null);
 const tempoRestante = ref("");
@@ -65,40 +63,48 @@ const usuarioParaDeletar = ref<Usuario | null>(null);
 const modalAberto = ref(false);
 const modalDeletarAberto = ref(false);
 
-
 const colunas: QTableColumn[] = [
   { name: 'id', label: 'ID', field: 'id', sortable: true, align: 'left' },
   { name: 'nome', label: 'Nome', field: 'nome', sortable: true, align: 'left' },
   { name: 'acoes', label: 'Ações', align: 'center', field: () => '' }
 ];
 
+// ✅ Função reutilizável para ler e decodificar o token
+function atualizarDadosToken() {
+  const token = localStorage.getItem('token');
+  if (!token) return;
 
-const token = localStorage.getItem('token');
-console.log(token);
-
-if (token) {
   try {
     const decoded = jwtDecode<TokenPayload>(token);
     valorId.value = decoded.id_usuario;
 
     const agora = Math.floor(Date.now() / 1000);
-    const restante = decoded.exp - agora;
-
-    tempoRestante.value = restante + " segundos";
+    tempoRestante.value = (decoded.exp - agora) + " segundos";
   } catch {
     console.log('Token inválido');
   }
 }
 
+let intervalo: ReturnType<typeof setInterval>;
 
 onMounted(async () => {
+  // ✅ Requisição primeiro, para o interceptor salvar o token novo
   usuarios.value = await carregarUsuarios();
+
+  // ✅ Só depois lê o token já atualizado
+  atualizarDadosToken();
+
+  // ✅ Atualiza o tempo restante a cada segundo
+  intervalo = setInterval(atualizarDadosToken, 1000);
 });
 
+// ✅ Limpa o intervalo ao sair da página para não vazar memória
+onUnmounted(() => {
+  clearInterval(intervalo);
+});
 
 async function atualizarFormulario() {
   usuarios.value = await carregarUsuarios();
-
 }
 
 async function atualizarUsuario(dados: Usuario) {
@@ -113,7 +119,6 @@ async function atualizarUsuario(dados: Usuario) {
       numero: dados.endereco?.numero ?? dados.numero!,
       cod_cidade: dados.endereco?.cod_cidade ?? dados.cidadeSelecionada!
     },
-
     login: {
       email: dados.login?.email,
       ...(dados.login?.novaSenha && { senha: dados.login.novaSenha })
@@ -156,6 +161,5 @@ function abrirModalDeletar(row: Usuario) {
   usuarioParaDeletar.value = row;
   modalDeletarAberto.value = true;
 }
-
 
 </script>

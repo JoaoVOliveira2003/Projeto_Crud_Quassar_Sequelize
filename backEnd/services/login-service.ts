@@ -24,7 +24,7 @@ export async function comprovarLogin(
     },
     "segredoSecreto",
     {
-      expiresIn: "5h",
+      expiresIn: "4sec",
     },
   );
 
