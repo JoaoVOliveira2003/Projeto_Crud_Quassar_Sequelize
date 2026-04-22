@@ -30,6 +30,9 @@
       @confirmarDelete="confirmarDelete" />
   </div>
 
+  <div v-if="valorId_tipo_usuario === 1">
+  conteúdo só para admin
+</div>
   id_tipo_usuario->{{ valorId_tipo_usuario }} <br>
   Tempo ->{{ tempoRestante }} <br>
   id ->{{ valorId }} <br>
@@ -41,13 +44,14 @@ import type { QTableColumn } from 'quasar';
 import type { DadosUsuario } from '../../interfaces/usuarioInterface';
 import type { TokenPayload } from '../../interfaces/TokenPayload'
 
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, 
+  onMounted, onUnmounted
+ } from 'vue';
 import { jwtDecode } from 'jwt-decode';
 import ModalDeletar from '../components/modalDeletar.vue';
 import ModalEditar from '../components/modalEditar.vue';
 import formularioDadosUsuario from '../components/formularioDadosUsuario.vue';
 import botaoLogout from '../components/botaoLogout.vue';
-
 
 import { carregarUsuarios } from '../../services/Usuarios/listarUsuarioService';
 import { atualizarUsuarioService } from '../../services/Usuarios/atualizarUsuarioService';
@@ -60,46 +64,55 @@ const usuarioParaDeletar = ref<DadosUsuario | null>(null);
 const modalAberto = ref(false);
 const modalDeletarAberto = ref(false);
 
-const colunas: QTableColumn[] = [
-  { name: 'id', label: 'ID', field: 'id', sortable: true, align: 'left' },
-  { name: 'nome', label: 'Nome', field: 'nome', sortable: true, align: 'left' },
-  { name: 'acoes', label: 'Ações', align: 'center', field: () => '' }
-];
-
-const valorId_tipo_usuario = ref<number|null>(null);
-const valorId = ref<number | null>(null);
-const tempoRestante = ref("");
-
-function verTempoToken() {
-  const token = localStorage.getItem('token');
-  if (!token) return;
-
-  try {
-    const decoded = jwtDecode<TokenPayload>(token);
-    valorId.value = decoded.id_usuario;
-    valorId_tipo_usuario.value = decoded.id_tipo_usuario;
-    const agora = Math.floor(Date.now() / 1000);
-    tempoRestante.value = (decoded.exp - agora) + " segundos";
-  } catch {
-    console.log('Token inválido');
+//ajustar isso daqui amanha!!!
+interface UsuarioRow {
+  tipoUsuario?: {
+    desc_tipo_usuario: string
   }
 }
 
-let intervalo: ReturnType<typeof setInterval>;
+const colunas: QTableColumn[] = [
+  { name: 'id', label: 'ID', field: 'id', sortable: true, align: 'left' },
+  { name: 'nome', label: 'Nome', field: 'nome', sortable: true, align: 'left' },
+  { name: 'tipoUsuario', label: 'Tipo usuário', field: (row: UsuarioRow) => row.tipoUsuario?.desc_tipo_usuario, sortable: true, align: 'left' },
+  { name: 'acoes', label: 'Ações', align: 'center', field: () => '' }
+];
+const valorId_tipo_usuario = ref<number | null>(null);
+const valorId = ref<number | null>(null);
+const tempoRestante = ref("");
+
+// function verTempoToken() {
+//   const token = localStorage.getItem('token');
+//   if (!token) return;
+
+//   try {
+//     const decoded = jwtDecode<TokenPayload>(token);
+//     valorId.value = decoded.id_usuario;
+//     valorId_tipo_usuario.value = decoded.id_tipo_usuario;
+//     const agora = Math.floor(Date.now() / 1000);
+//     tempoRestante.value = (decoded.exp - agora) + " segundos";
+//   } catch {
+//     console.log('Token inválido');
+//   }
+// }
+// let intervalo: ReturnType<typeof setInterval>;
 onMounted(async () => {
   usuarios.value = await carregarUsuarios();
-  verTempoToken();
-  intervalo = setInterval(verTempoToken, 1000);
+  console.log(usuarios.value)
+  // verTempoToken();
+  // intervalo = setInterval(verTempoToken, 1000);
 });
-
 onUnmounted(() => {
-  clearInterval(intervalo);
+  // clearInterval(intervalo);
 });
 
 
 function testeToken(){
   const token = localStorage.getItem('token');
   const decoded = jwtDecode<TokenPayload>(token!);
+  console.log('token decodificado:', decoded);
+  valorId.value = decoded.id_usuario;
+  valorId_tipo_usuario.value = decoded.id_tipo_usuario;
   const segundos = decoded.exp - decoded.iat;
   console.log('Duração do token:', segundos, 'segundos');
 }

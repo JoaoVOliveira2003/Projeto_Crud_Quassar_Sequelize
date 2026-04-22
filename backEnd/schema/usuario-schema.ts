@@ -58,6 +58,11 @@ export class UsuarioQuery {
             attributes: ["email"],
             required: true,
           },
+          {
+            model:TipoUsuarioSchema,
+            as:"tipoUsuario",
+            required:true
+          },
         ],
         order: [["id", "desc"]],
       });

@@ -3,7 +3,6 @@ import { Request, Response, NextFunction } from "express";
 
 const SEGREDO = "segredoSecreto";
 
-// ✅ Extende o tipo do Request para aceitar o campo usuario
 declare global {
   namespace Express {
     interface Request {

@@ -8,6 +8,7 @@
     hide-bottom-space
     lazy-rules
     :rules="rules"
+    autocomplete="current-password"
   >
     <template v-slot:append>
       <q-icon

@@ -41,24 +41,22 @@
 
                     <div class="row q-gutter-sm">
                         <div class="col">
-                            <selectCidade class="q-mb-sm" v-model="formularioLocal.cidadeSelecionada" :rules="regras.cidadeSelecionada" />
+                            <selectCidade class="q-mb-sm" v-model="formularioLocal.cidadeSelecionada"
+                                :rules="regras.cidadeSelecionada" />
                         </div>
                         <div class="col">
-                            <selectTipoUsuario class="q-mb-sm" v-model="formularioLocal.id_tipo_usuario" :rules="regras.id_tipo_usuario"/>
+                            <selectTipoUsuario class="q-mb-sm" v-model="formularioLocal.id_tipo_usuario"
+                                :rules="regras.id_tipo_usuario" />
                         </div>
                     </div>
 
                     <div class="row q-gutter-sm">
                         <div class="col">
-                            <q-input filled v-model="formularioLocal.email" label="Email" class="bordered q-mb-sm"
-                                clearable hide-bottom-space lazy-rules :rules="regras.email" />
+                            <q-input filled v-model="formularioLocal.email" label="Email" class="bordered q-mb-sm" clearable hide-bottom-space lazy-rules :rules="regras.email" />
                         </div>
 
                         <div class="col">
-
-                            <InputSenha v-model="formularioLocal.novaSenha" label="Nova senha(opcional)"
-                                :rules="regras.novaSenha" />
-
+                            <InputSenha v-model="formularioLocal.novaSenha" label="Nova senha (opcional)" :rules="regras.novaSenha" :disable="valorId_tipo_usuario !== 1" />
                         </div>
                     </div>
 
@@ -81,6 +79,12 @@ import type { DadosUsuario } from '../../interfaces/usuarioInterface'
 import { regras } from 'src/utils/validacao/regras'
 import { validarObjeto } from 'src/utils/validacao/validacao'
 import InputSenha from './inputSenha.vue'
+
+import { jwtDecode } from 'jwt-decode';
+import type { TokenPayload } from '../../interfaces/TokenPayload';
+const token = localStorage.getItem('token');
+const valorId_tipo_usuario = token ? jwtDecode<TokenPayload>(token).id_tipo_usuario : null;
+
 
 const props = defineProps<{
     modeloAberto: boolean,
@@ -110,7 +114,7 @@ const formularioLocal = reactive({
     cidadeSelecionada: 0,
     email: '',
     novaSenha: '',
-    id_tipo_usuario:0,
+    id_tipo_usuario: 0,
 
 })
 
@@ -165,7 +169,7 @@ async function validarAntesSalvar() {
         dataDeNascimento: formularioLocal.dataDeNascimento,
         peso: formularioLocal.peso,
         altura: formularioLocal.altura,
-        id_tipo_usuario:formularioLocal.id_tipo_usuario,
+        id_tipo_usuario: formularioLocal.id_tipo_usuario,
         endereco: {
             rua: formularioLocal.rua,
             numero: formularioLocal.numero,

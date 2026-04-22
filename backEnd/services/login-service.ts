@@ -18,16 +18,13 @@ export async function comprovarLogin(
 
   const usuario = resultado[0];
 
-  const token = jwt.sign(
-    {
-      id_usuario: (usuario as any).id_usuario,
-      id_tipo_usuario:(usuario as any).id_tipo_usuario,
-    },
-    "segredoSecreto",
-    {
-      expiresIn: "30s",
-    },
-  );
+const payload = {
+  id_usuario: (usuario as any).id_usuario,
+  id_tipo_usuario: (usuario as any)['usuario.id_tipo_usuario'],
+};
+
+console.log('payload do token:', payload); // ← aqui
+const token = jwt.sign(payload, "segredoSecreto", { expiresIn: "30s" });
 
   return token;
 }
