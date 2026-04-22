@@ -4,6 +4,7 @@ import { EnderecoSchema } from "./endereco-schema.js";
 import { CidadeSchema } from "./cidade-shema.js";
 import { DadosUsuario } from "../interfaces/usuarioInterface";
 import { LoginSchema } from "./login-schema.js";
+import { TipoUsuarioSchema } from "./tipoUsuario-schema.js";
 
 export const UsuarioSchema = conecta.define("Usuario", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -12,6 +13,7 @@ export const UsuarioSchema = conecta.define("Usuario", {
   peso: { type: DataTypes.INTEGER, allowNull: true },
   altura: { type: DataTypes.FLOAT, allowNull: true },
   criadoPor: { type: DataTypes.INTEGER, allowNull: true },
+  id_tipo_usuario: { type: DataTypes.INTEGER, allowNull: true },
 });
 
 (UsuarioSchema as any).associate = function (schema: any) {
@@ -22,6 +24,10 @@ export const UsuarioSchema = conecta.define("Usuario", {
   this.hasMany(schema.LoginSchema, {
     foreignKey: "id_usuario",
     as: "login",
+  });
+  this.belongsTo(schema.TipoUsuarioSchema, {
+    foreignKey: "id_tipo_usuario",
+    as: "tipoUsuario",
   });
 };
 

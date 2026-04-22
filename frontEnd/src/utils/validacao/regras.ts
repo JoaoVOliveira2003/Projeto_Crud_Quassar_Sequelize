@@ -43,5 +43,8 @@ export const regras: Record<string, FuncaoRegra[]> = {
   ],
   novaSenha:[
   (valor) => !valor || (typeof valor === 'string' && valor.length >= 3) || 'Nova senha deve ter mais que três caracteres'
+  ],
+  tipoUsuario:[
+    (valor) => valor !== null && valor !== undefined || 'Nescessario preencher algum tipo',
   ]
 };

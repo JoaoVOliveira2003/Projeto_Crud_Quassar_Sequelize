@@ -1,6 +1,5 @@
 import { fn, col, DataTypes } from "sequelize";
 import { conecta } from "../config/conecta";
-import { UsuarioSchema } from "./usuario-schema";
 import { loginInterface } from "../interfaces/loginInterface";
 
 export const LoginSchema = conecta.define(

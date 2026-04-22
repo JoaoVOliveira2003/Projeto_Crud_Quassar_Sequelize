@@ -21,6 +21,7 @@ export async function comprovarLogin(
   const token = jwt.sign(
     {
       id_usuario: (usuario as any).id_usuario,
+      id_tipo_usuario:(usuario as any).id_tipo_usuario,
     },
     "segredoSecreto",
     {

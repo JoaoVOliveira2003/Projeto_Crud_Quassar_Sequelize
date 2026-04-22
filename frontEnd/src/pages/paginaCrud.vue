@@ -30,30 +30,28 @@
       @confirmarDelete="confirmarDelete" />
   </div>
 
+  id_tipo_usuario->{{ valorId_tipo_usuario }} <br>
   Tempo ->{{ tempoRestante }} <br>
-  id ->{{ valorId }}
+  id ->{{ valorId }} <br>
 </template>
 
 
 <script setup lang="ts">
 import type { QTableColumn } from 'quasar';
 import type { DadosUsuario } from '../../interfaces/usuarioInterface';
+import type { TokenPayload } from '../../interfaces/TokenPayload'
 
 import { ref, onMounted, onUnmounted } from 'vue';
 import { jwtDecode } from 'jwt-decode';
 import ModalDeletar from '../components/modalDeletar.vue';
 import ModalEditar from '../components/modalEditar.vue';
 import formularioDadosUsuario from '../components/formularioDadosUsuario.vue';
-import botaoLogout from '../components/botaoLogout.vue'
+import botaoLogout from '../components/botaoLogout.vue';
+
 
 import { carregarUsuarios } from '../../services/Usuarios/listarUsuarioService';
 import { atualizarUsuarioService } from '../../services/Usuarios/atualizarUsuarioService';
 import { deletarUsuario } from '../../services/Usuarios/deletarUsuarioService';
-
-type TokenPayload = {
-  id_usuario: number;
-  exp: number;
-};
 
 const usuarios = ref<DadosUsuario[]>([]);
 const usuarioParaEditar = ref<DadosUsuario | null>(null);
@@ -68,19 +66,18 @@ const colunas: QTableColumn[] = [
   { name: 'acoes', label: 'Ações', align: 'center', field: () => '' }
 ];
 
-
+const valorId_tipo_usuario = ref<number|null>(null);
 const valorId = ref<number | null>(null);
 const tempoRestante = ref("");
 
-// ✅ Função reutilizável para ler e decodificar o token
-function atualizarTempoToken() {
+function verTempoToken() {
   const token = localStorage.getItem('token');
   if (!token) return;
 
   try {
     const decoded = jwtDecode<TokenPayload>(token);
     valorId.value = decoded.id_usuario;
-
+    valorId_tipo_usuario.value = decoded.id_tipo_usuario;
     const agora = Math.floor(Date.now() / 1000);
     tempoRestante.value = (decoded.exp - agora) + " segundos";
   } catch {
@@ -91,8 +88,8 @@ function atualizarTempoToken() {
 let intervalo: ReturnType<typeof setInterval>;
 onMounted(async () => {
   usuarios.value = await carregarUsuarios();
-  atualizarTempoToken();
-  intervalo = setInterval(atualizarTempoToken, 1000);
+  verTempoToken();
+  intervalo = setInterval(verTempoToken, 1000);
 });
 
 onUnmounted(() => {
@@ -101,11 +98,10 @@ onUnmounted(() => {
 
 
 function testeToken(){
-const token = localStorage.getItem('token');
-const decoded = jwtDecode<TokenPayload>(token!);
-
-const segundos = decoded.exp - decoded.iat;
-console.log('Duração do token:', segundos, 'segundos');
+  const token = localStorage.getItem('token');
+  const decoded = jwtDecode<TokenPayload>(token!);
+  const segundos = decoded.exp - decoded.iat;
+  console.log('Duração do token:', segundos, 'segundos');
 }
 
 async function atualizarFormulario() {
@@ -119,6 +115,7 @@ async function atualizarUsuario(dados: DadosUsuario) {
     dataDeNascimento: dados.dataDeNascimento,
     peso: dados.peso,
     altura: dados.altura,
+    id_tipo_usuario:dados.id_tipo_usuario,
     endereco: {
       rua: dados.endereco?.rua ?? dados.endereco.rua!,
       numero: dados.endereco?.numero ?? dados.endereco.numero!,

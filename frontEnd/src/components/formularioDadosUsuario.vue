@@ -33,8 +33,17 @@
 
     <br>
 
-    <CidadeSelect lazy-rules v-model="formularioPrincipal.cidadeSelecionada" :rules="regras.cidadeSelecionada" />
-
+    <div class="row q-gutter-sm">
+      <div class="col">
+       <selectCidade lazy-rules v-model="formularioPrincipal.cidadeSelecionada" :rules="regras.cidadeSelecionada" />
+      </div>
+      <div class="col">
+        <selectTipoUsuario lazy-rules v-model="formularioPrincipal.tipoUsuario" :rules="regras.tipoUsuario"/>
+      </div>
+    
+  
+    </div>
+ 
     <div class="row q-gutter-sm">
       <div class="col">
         <q-input lazy-rules filled v-model="formularioPrincipal.email" label="Email" placeholder="Digite sua email"
@@ -58,7 +67,8 @@
 </template>
 <script setup lang="ts">
 import { regras } from 'src/utils/validacao/regras'
-import CidadeSelect from '../components/cidadeSelect.vue';
+import selectCidade from '../components/selectCidade.vue';
+import selectTipoUsuario from '../components/selectTipoUsuario.vue';
 import { criarUsuario } from '../../services/Usuarios/criarUsuarioService';
 import { validarObjeto } from 'src/utils/validacao/validacao'
 import { ref, reactive } from 'vue';
@@ -80,6 +90,7 @@ const estadoInicial = {
   rua: '',
   numero: null,
   cidadeSelecionada: null,
+  tipoUsuario:null,
   email:'',
   senha:''
 };
@@ -91,6 +102,7 @@ const formularioPrincipal = reactive({
   altura: null as number | null,
   rua: '',
   numero: null as number | null,
+  tipoUsuario: null as number | null,
   cidadeSelecionada: null as number | null,
   email:'',
   senha:''
@@ -104,6 +116,7 @@ async function createUsuarioTodosDados() {
     dataDeNascimento: formularioPrincipal.dataDeNascimento,
     peso: formularioPrincipal.peso,
     altura: formularioPrincipal.altura,
+    id_tipo_usuario:formularioPrincipal.tipoUsuario,
     endereco: {
       rua: formularioPrincipal.rua,
       numero: formularioPrincipal.numero,

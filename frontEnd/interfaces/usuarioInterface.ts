@@ -4,6 +4,7 @@ export interface DadosUsuario {
   dataDeNascimento: string;
   peso: number | null;
   altura: number | null;
+  id_tipo_usuario: number | null,
   endereco: {
     rua: string;
     numero: number | null;
@@ -14,23 +15,3 @@ export interface DadosUsuario {
     senha?: string;
   }
 }
-
-// export interface Usuario {
-//   id: number;
-//   nome: string;
-//   peso: number;
-//   altura: number;
-//   dataDeNascimento: string;
-//   rua?: string;
-//   numero?: number;
-//   cidadeSelecionada?: number;
-//   endereco?: {
-//     rua: string;
-//     numero: number;
-//     cod_cidade: number;
-//   };
-// login: {
-//   email: string;
-//   novaSenha: string;
-// }
-// }
