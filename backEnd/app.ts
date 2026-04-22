@@ -11,10 +11,13 @@ import { routerLogin } from "./routes/login.ts";
 import "dotenv/config";
 
 const app = express();
-app.use(cors());
+app.use(cors(
+  {exposedHeaders: ['Authorization'] }
+));
 app.use(express.json());
 
 const db = { UsuarioSchema, EnderecoSchema, CidadeSchema,LoginSchema };
+
 
 (Object.values(db) as any).forEach((schema: any) => {
   if (schema.associate) {

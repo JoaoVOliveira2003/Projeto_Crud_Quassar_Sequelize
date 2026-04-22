@@ -12,7 +12,11 @@ declare global {
   }
 }
 
-export const validarTokenObrigatorioMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const validarTokenObrigatorioMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
@@ -20,8 +24,10 @@ export const validarTokenObrigatorioMiddleware = (req: Request, res: Response, n
   }
 
   try {
-    const payload = jwt.verify(token, SEGREDO, { ignoreExpiration: true }) as jwt.JwtPayload;
-    req.usuario = payload; // ✅ Injeta no req
+    const payload = jwt.verify(token, SEGREDO, {
+      ignoreExpiration: true,
+    }) as jwt.JwtPayload;
+    req.usuario = payload;
     renovarToken(payload, res);
     next();
   } catch {
@@ -29,14 +35,20 @@ export const validarTokenObrigatorioMiddleware = (req: Request, res: Response, n
   }
 };
 
-export const validarTokenNaoObrigatorioMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const validarTokenNaoObrigatorioMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) return next();
 
   try {
-    const payload = jwt.verify(token, SEGREDO, { ignoreExpiration: true }) as jwt.JwtPayload;
-    req.usuario = payload; // ✅ Injeta no req também
+    const payload = jwt.verify(token, SEGREDO, {
+      ignoreExpiration: true,
+    }) as jwt.JwtPayload;
+    req.usuario = payload;
     renovarToken(payload, res);
   } catch {
     return res.status(401).json({ mensagem: "Token inválido ou expirado" });
@@ -46,7 +58,13 @@ export const validarTokenNaoObrigatorioMiddleware = (req: Request, res: Response
 };
 
 const renovarToken = (payload: jwt.JwtPayload, res: Response) => {
+  
+  const agora = Math.floor(Date.now() / 1000);
+  if (payload.exp && payload.exp > agora){
+    return;
+  } 
+
   const { iat, exp, ...dadosUsuario } = payload;
-  const novoToken = jwt.sign(dadosUsuario, SEGREDO, { expiresIn: "1h" });
+  const novoToken = jwt.sign(dadosUsuario, SEGREDO, { expiresIn: "10s" });
   res.setHeader("Authorization", `Bearer ${novoToken}`);
 };

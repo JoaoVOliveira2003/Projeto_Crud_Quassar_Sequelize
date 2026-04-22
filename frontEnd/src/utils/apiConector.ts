@@ -15,6 +15,11 @@ api.interceptors.response.use(
   (response) => {
     const novoToken = response.headers['authorization']?.split(' ')[1];
 
+    console.log('----------------------------');
+    console.log(localStorage.getItem('token'));
+    console.log('----------------------------');
+
+
     if(novoToken){
       localStorage.setItem('token',novoToken);
       api.defaults.headers.common['Authorization'] = `Bearer ${novoToken}`;

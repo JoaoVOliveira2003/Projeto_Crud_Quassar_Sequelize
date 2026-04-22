@@ -10,9 +10,8 @@ export async function salvarUsuario(
     usuario_query: UsuarioQuery = new UsuarioQuery(),
     endereco_query: EnderecoQuery = new EnderecoQuery(),
     login_query: LoginQuery = new LoginQuery()
-) {
+){
 
-    
     const resultado = validarGenerico(usuario);
     if (resultado !== true) {
         throw new Error(resultado.join(' | '));

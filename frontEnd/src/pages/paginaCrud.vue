@@ -21,6 +21,10 @@
       </template>
     </q-table>
 
+    <q-btn @click="testeToken">
+      testeToken
+    </q-btn>
+
     <ModalEditar v-model:modeloAberto="modalAberto" :usuario="usuarioParaEditar" @salvar="atualizarUsuario" />
     <ModalDeletar v-model:modeloAberto="modalDeletarAberto" :usuario="usuarioParaDeletar"
       @confirmarDelete="confirmarDelete" />
@@ -32,11 +36,11 @@
 
 
 <script setup lang="ts">
+import type { QTableColumn } from 'quasar';
+import type { DadosUsuario } from '../../interfaces/usuarioInterface';
 
 import { ref, onMounted, onUnmounted } from 'vue';
 import { jwtDecode } from 'jwt-decode';
-import type { QTableColumn } from 'quasar';
-
 import ModalDeletar from '../components/modalDeletar.vue';
 import ModalEditar from '../components/modalEditar.vue';
 import formularioDadosUsuario from '../components/formularioDadosUsuario.vue';
@@ -46,15 +50,10 @@ import { carregarUsuarios } from '../../services/Usuarios/listarUsuarioService';
 import { atualizarUsuarioService } from '../../services/Usuarios/atualizarUsuarioService';
 import { deletarUsuario } from '../../services/Usuarios/deletarUsuarioService';
 
-import type { DadosUsuario } from '../../interfaces/usuarioInterface';
-
 type TokenPayload = {
   id_usuario: number;
   exp: number;
 };
-
-const valorId = ref<number | null>(null);
-const tempoRestante = ref("");
 
 const usuarios = ref<DadosUsuario[]>([]);
 const usuarioParaEditar = ref<DadosUsuario | null>(null);
@@ -70,8 +69,11 @@ const colunas: QTableColumn[] = [
 ];
 
 
+const valorId = ref<number | null>(null);
+const tempoRestante = ref("");
+
 // ✅ Função reutilizável para ler e decodificar o token
-function atualizarDadosToken() {
+function atualizarTempoToken() {
   const token = localStorage.getItem('token');
   if (!token) return;
 
@@ -85,21 +87,27 @@ function atualizarDadosToken() {
     console.log('Token inválido');
   }
 }
+
 let intervalo: ReturnType<typeof setInterval>;
 onMounted(async () => {
-  // ✅ Requisição primeiro, para o interceptor salvar o token novo
   usuarios.value = await carregarUsuarios();
-
-  // ✅ Só depois lê o token já atualizado
-  atualizarDadosToken();
-
-  // ✅ Atualiza o tempo restante a cada segundo
-  intervalo = setInterval(atualizarDadosToken, 1000);
+  atualizarTempoToken();
+  intervalo = setInterval(atualizarTempoToken, 1000);
 });
-// ✅ Limpa o intervalo ao sair da página para não vazar memória
+
 onUnmounted(() => {
   clearInterval(intervalo);
 });
+
+
+function testeToken(){
+const token = localStorage.getItem('token');
+const decoded = jwtDecode<TokenPayload>(token!);
+
+const segundos = decoded.exp - decoded.iat;
+console.log('Duração do token:', segundos, 'segundos');
+}
+
 async function atualizarFormulario() {
   usuarios.value = await carregarUsuarios();
 }
