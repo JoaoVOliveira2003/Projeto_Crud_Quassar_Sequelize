@@ -16,11 +16,11 @@
 
 <script setup lang="ts">
   import { computed } from 'vue'
-  import type { Usuario } from '../../interfaces/usuarioInterface'
+  import type { DadosUsuario } from '../../interfaces/usuarioInterface'
 
   //define props -> entrada do de dados
   const props = defineProps<{
-    modeloAberto: boolean, usuario?: Usuario | null
+    modeloAberto: boolean, usuario?: DadosUsuario | null
   }>()
 
   // enviar eventos do filho para o pai.

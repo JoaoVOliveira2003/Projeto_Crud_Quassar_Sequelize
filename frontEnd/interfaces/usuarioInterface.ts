@@ -1,5 +1,5 @@
 export interface DadosUsuario {
-  id?: number;
+  id?: number | undefined;
   nome: string;
   dataDeNascimento: string;
   peso: number | null;
@@ -15,22 +15,22 @@ export interface DadosUsuario {
   }
 }
 
-export interface Usuario {
-  id: number;
-  nome: string;
-  peso: number;
-  altura: number;
-  dataDeNascimento: string;
-  rua?: string;
-  numero?: number;
-  cidadeSelecionada?: number;
-  endereco?: {
-    rua: string;
-    numero: number;
-    cod_cidade: number;
-  };
-login: {
-  email: string;
-  novaSenha: string;
-}
-}
+// export interface Usuario {
+//   id: number;
+//   nome: string;
+//   peso: number;
+//   altura: number;
+//   dataDeNascimento: string;
+//   rua?: string;
+//   numero?: number;
+//   cidadeSelecionada?: number;
+//   endereco?: {
+//     rua: string;
+//     numero: number;
+//     cod_cidade: number;
+//   };
+// login: {
+//   email: string;
+//   novaSenha: string;
+// }
+// }

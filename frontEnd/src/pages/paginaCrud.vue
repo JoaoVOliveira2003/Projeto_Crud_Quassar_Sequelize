@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted, onUnmounted } from 'vue'; // ✅ adicionou onUnmounted
+import { ref, onMounted, onUnmounted } from 'vue';
 import { jwtDecode } from 'jwt-decode';
 import type { QTableColumn } from 'quasar';
 
@@ -46,7 +46,7 @@ import { carregarUsuarios } from '../../services/Usuarios/listarUsuarioService';
 import { atualizarUsuarioService } from '../../services/Usuarios/atualizarUsuarioService';
 import { deletarUsuario } from '../../services/Usuarios/deletarUsuarioService';
 
-import type { DadosUsuario, Usuario } from '../../interfaces/usuarioInterface';
+import type { DadosUsuario } from '../../interfaces/usuarioInterface';
 
 type TokenPayload = {
   id_usuario: number;
@@ -56,9 +56,9 @@ type TokenPayload = {
 const valorId = ref<number | null>(null);
 const tempoRestante = ref("");
 
-const usuarios = ref<Usuario[]>([]);
-const usuarioParaEditar = ref<Usuario | null>(null);
-const usuarioParaDeletar = ref<Usuario | null>(null);
+const usuarios = ref<DadosUsuario[]>([]);
+const usuarioParaEditar = ref<DadosUsuario | null>(null);
+const usuarioParaDeletar = ref<DadosUsuario | null>(null);
 
 const modalAberto = ref(false);
 const modalDeletarAberto = ref(false);
@@ -68,6 +68,7 @@ const colunas: QTableColumn[] = [
   { name: 'nome', label: 'Nome', field: 'nome', sortable: true, align: 'left' },
   { name: 'acoes', label: 'Ações', align: 'center', field: () => '' }
 ];
+
 
 // ✅ Função reutilizável para ler e decodificar o token
 function atualizarDadosToken() {
@@ -84,9 +85,7 @@ function atualizarDadosToken() {
     console.log('Token inválido');
   }
 }
-
 let intervalo: ReturnType<typeof setInterval>;
-
 onMounted(async () => {
   // ✅ Requisição primeiro, para o interceptor salvar o token novo
   usuarios.value = await carregarUsuarios();
@@ -97,17 +96,15 @@ onMounted(async () => {
   // ✅ Atualiza o tempo restante a cada segundo
   intervalo = setInterval(atualizarDadosToken, 1000);
 });
-
 // ✅ Limpa o intervalo ao sair da página para não vazar memória
 onUnmounted(() => {
   clearInterval(intervalo);
 });
-
 async function atualizarFormulario() {
   usuarios.value = await carregarUsuarios();
 }
 
-async function atualizarUsuario(dados: Usuario) {
+async function atualizarUsuario(dados: DadosUsuario) {
   const dadosCorretos: DadosUsuario = {
     id: dados.id,
     nome: dados.nome,
@@ -115,13 +112,13 @@ async function atualizarUsuario(dados: Usuario) {
     peso: dados.peso,
     altura: dados.altura,
     endereco: {
-      rua: dados.endereco?.rua ?? dados.rua!,
-      numero: dados.endereco?.numero ?? dados.numero!,
-      cod_cidade: dados.endereco?.cod_cidade ?? dados.cidadeSelecionada!
+      rua: dados.endereco?.rua ?? dados.endereco.rua!,
+      numero: dados.endereco?.numero ?? dados.endereco.numero!,
+      cod_cidade: dados.endereco?.cod_cidade ?? dados.endereco.cod_cidade!
     },
     login: {
       email: dados.login?.email,
-      ...(dados.login?.novaSenha && { senha: dados.login.novaSenha })
+      ...(dados.login?.senha && { senha: dados.login.senha })
     }
   };
 
@@ -141,7 +138,7 @@ async function confirmarDelete() {
   if (!usuarioParaDeletar.value) return;
 
   try {
-    await deletarUsuario(usuarioParaDeletar.value.id);
+    await deletarUsuario(usuarioParaDeletar.value.id!);
     await atualizarFormulario();
     modalDeletarAberto.value = false;
     alert('Usuário deletado com sucesso');
@@ -152,12 +149,12 @@ async function confirmarDelete() {
   }
 }
 
-function abrirModalEditar(row: Usuario) {
+function abrirModalEditar(row: DadosUsuario) {
   usuarioParaEditar.value = row;
   modalAberto.value = true;
 }
 
-function abrirModalDeletar(row: Usuario) {
+function abrirModalDeletar(row: DadosUsuario) {
   usuarioParaDeletar.value = row;
   modalDeletarAberto.value = true;
 }
