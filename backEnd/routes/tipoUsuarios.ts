@@ -6,5 +6,3 @@ export const routerTipoUsuarios = Router();
 routerTipoUsuarios.get("",async(req,res)=>await tipoUsarioController.getTiposUsuario(req,res));
 
 export default routerTipoUsuarios;
-
-

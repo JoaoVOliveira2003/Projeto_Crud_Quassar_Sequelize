@@ -52,11 +52,13 @@
 
                     <div class="row q-gutter-sm">
                         <div class="col">
-                            <q-input filled v-model="formularioLocal.email" label="Email" class="bordered q-mb-sm" clearable hide-bottom-space lazy-rules :rules="regras.email" />
+                            <q-input filled v-model="formularioLocal.email" label="Email" class="bordered q-mb-sm"
+                                clearable hide-bottom-space lazy-rules :rules="regras.email" />
                         </div>
 
                         <div class="col">
-                            <InputSenha v-model="formularioLocal.novaSenha" label="Nova senha (opcional)" :rules="regras.novaSenha" :disable="valorId_tipo_usuario !== 1" />
+                            <InputSenha v-model="formularioLocal.novaSenha" label="Nova senha (opcional)"
+                                :rules="regras.novaSenha" :disable="valorId_tipo_usuario !== 1" />
                         </div>
                     </div>
 
@@ -118,7 +120,6 @@ const formularioLocal = reactive({
 
 })
 
-//observar mudanças em uma variável
 watch(() => props.modeloAberto, (abriu) => {
     if (abriu && props.usuario) {
         preencherFormulario(props.usuario)
@@ -156,6 +157,7 @@ function limparModal() {
 }
 
 async function validarAntesSalvar() {
+
     const valido = await formEditarRef.value.validate()
 
     if (!valido || !formularioLocal.cidadeSelecionada) {

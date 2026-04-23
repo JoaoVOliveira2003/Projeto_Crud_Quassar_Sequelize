@@ -10,9 +10,3 @@ export async function criarUsuario(usuario: DadosUsuario) {
     console.error('Erro ao criar usuário:', error);
   }
 }
-
-// const res = await axios.post(
-//   'http://localhost:3000/usuario/criarUsuario/',
-//   { usuario },
-//   { headers: { 'Content-Type': 'application/json' } },
-// );

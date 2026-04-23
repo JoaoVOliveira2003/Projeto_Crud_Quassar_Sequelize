@@ -7,9 +7,11 @@ export async function comprovarLogin(
   login: loginInterface,
   login_query: LoginQuery = new LoginQuery(),
 ) {
+  login.senha = CryptoJS.HmacSHA256(
+    login.senha,
+    process.env.CRYPTO_SECRET!,
+  ).toString();
 
-  login.senha = CryptoJS.HmacSHA256(login.senha, process.env.CRYPTO_SECRET!).toString();  
-  
   const resultado = await login_query.realizarLogin(login);
 
   if (resultado.length === 0) {
@@ -18,13 +20,11 @@ export async function comprovarLogin(
 
   const usuario = resultado[0];
 
-const payload = {
-  id_usuario: (usuario as any).id_usuario,
-  id_tipo_usuario: (usuario as any)['usuario.id_tipo_usuario'],
-};
+  const payload = {
+    id_usuario: (usuario as any).id_usuario,
+    id_tipo_usuario: (usuario as any)["usuario.id_tipo_usuario"],
+  };
 
-console.log('payload do token:', payload); // ← aqui
-const token = jwt.sign(payload, "segredoSecreto", { expiresIn: "30s" });
-
+  const token = jwt.sign(payload, "segredoSecreto", { expiresIn: "10s" });
   return token;
 }

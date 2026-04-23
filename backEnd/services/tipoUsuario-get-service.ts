@@ -1,8 +1,8 @@
-import {TipoUsuarioQuery} from "../schema/tipoUsuario-schema";
+import { TipoUsuarioQuery } from "../schema/tipoUsuario-schema";
 
 export async function getTodosTiposUsuario(
-    tipoUsuarioQuery = new TipoUsuarioQuery()
+  tipoUsuarioQuery = new TipoUsuarioQuery(),
 ) {
-   const tipoUsuario = await tipoUsuarioQuery.getTodosTiposUsuario();
-   return tipoUsuario;  
+  const tipoUsuario = await tipoUsuarioQuery.getTodosTiposUsuario();
+  return tipoUsuario;
 }

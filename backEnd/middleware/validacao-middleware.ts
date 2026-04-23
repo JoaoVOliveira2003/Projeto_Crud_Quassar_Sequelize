@@ -1,16 +1,16 @@
-import { Request, Response, NextFunction } from 'express';
-import { regras } from './regras-middleware';
+import { Request, Response, NextFunction } from "express";
+import { regras } from "./regras-middleware";
 
 type ListaDeErros = string[];
 type ObjetoGenerico = Record<string, unknown>;
 
 function validarObjeto(
   objetoDesconhecido: unknown,
-  caminhoPercorrido: string[] = []
+  caminhoPercorrido: string[] = [],
 ): ListaDeErros {
   const errosEncontrados: ListaDeErros = [];
 
-  if (typeof objetoDesconhecido !== 'object' || objetoDesconhecido === null) {
+  if (typeof objetoDesconhecido !== "object" || objetoDesconhecido === null) {
     return errosEncontrados;
   }
 
@@ -22,7 +22,7 @@ function validarObjeto(
 
     const ehObjetoAninhado =
       valorDaChave !== null &&
-      typeof valorDaChave === 'object' &&
+      typeof valorDaChave === "object" &&
       !Array.isArray(valorDaChave);
 
     if (ehObjetoAninhado) {
@@ -39,7 +39,7 @@ function validarObjeto(
       for (const regraAtual of regrasDoCampo) {
         const resultado = regraAtual(valorDaChave);
         if (resultado !== true) {
-          errosEncontrados.push(`${caminhoCompleto.join('.')} → ${resultado}`);
+          errosEncontrados.push(`${caminhoCompleto.join(".")} → ${resultado}`);
           break; // para no primeiro erro do campo, igual ao front
         }
       }
@@ -49,7 +49,11 @@ function validarObjeto(
   return errosEncontrados;
 }
 
-export function validarBody(req: Request, res: Response, next: NextFunction): void {
+export function validarBody(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   const erros = validarObjeto(req.body);
 
   if (erros.length > 0) {

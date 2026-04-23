@@ -6,14 +6,14 @@ export interface DadosUsuario {
   altura: number;
   criadoPor?: number;
   endereco: {
-    id_usuario? : number,
+    id_usuario?: number;
     rua: string;
     numero: number;
     cod_cidade: number;
   };
-  login:{
-    id_usuario? : number,
+  login: {
+    id_usuario?: number;
     email: string;
     senha: string;
-  }
+  };
 }

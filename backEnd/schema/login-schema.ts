@@ -1,7 +1,7 @@
 import { fn, col, DataTypes } from "sequelize";
 import { conecta } from "../config/conecta";
 import { loginInterface } from "../interfaces/loginInterface";
-import {UsuarioSchema } from "./usuario-schema"
+import { UsuarioSchema } from "./usuario-schema";
 
 export const LoginSchema = conecta.define(
   "Login",
@@ -40,7 +40,7 @@ export class LoginQuery {
     }
   }
 
-async realizarLogin(login: any) {
+  async realizarLogin(login: any) {
     try {
       const result = await LoginSchema.findAll({
         attributes: ["id_usuario", [fn("COUNT", col("*")), "total"]],
@@ -55,9 +55,9 @@ async realizarLogin(login: any) {
             model: UsuarioSchema,
             as: "usuario",
             required: true,
-            attributes: ["id_tipo_usuario"]
-          }
-        ]
+            attributes: ["id_tipo_usuario"],
+          },
+        ],
       });
       return result;
     } catch (error) {

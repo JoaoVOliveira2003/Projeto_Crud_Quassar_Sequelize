@@ -3,7 +3,8 @@ import { getTodosUsuarios } from "../services/usuario-get-service";
 import { salvarUsuario } from "../services/usuario-salvar-service";
 import { deletarUsuarioService } from "../services/usuario-deletar-service";
 import { atualizarUsuarioService } from "../services/usuario-atualizar-service";
-import jwt from "jsonwebtoken";
+import { getTodosUsuariosFiltrados } from "../services/usuario-get-filtrado-service";
+import { getVerificarTipoUsuario } from "../services/usuario-get-verificar-tipo-service";
 
 export namespace usuarioController {
   export async function getUsuarios(req: Request, res: Response) {
@@ -55,12 +56,43 @@ export namespace usuarioController {
       const usuario = req.body.usuario;
 
       const retorno = await atualizarUsuarioService(id, usuario);
-
+      console.log(retorno);
       res.json(retorno);
     } catch (error: any) {
       console.error(error);
       res.status(500).json({
         erro: "Erro ao atualizar usuário e endereço",
+        detalhes: error.message,
+      });
+    }
+  }
+
+  export async function getUsuariosFiltrado(req: Request, res: Response) {
+    try {
+      let filtros = req.query;
+      filtros = Object.assign({}, filtros);
+      const retorno = await getTodosUsuariosFiltrados(filtros);
+      res.json(retorno);
+    } catch (error: any) {
+      res.status(500).json({
+        erro: "Erro ao trazer usuários filtrado",
+        detalhes: error.message,
+      });
+    }
+  }
+
+  export async function verificarTipoUsuario(req: Request, res: Response) {
+    try {
+      let id_usuario = req.body.id_usuario;
+      let id_tipo_usuario = req.body.id_tipo_usuario;
+      const retorno = await getVerificarTipoUsuario(
+        id_usuario,
+        id_tipo_usuario,
+      );
+      res.json(retorno);
+    } catch (error: any) {
+      res.status(500).json({
+        erro: "Erro ao trazer usuários filtrado",
         detalhes: error.message,
       });
     }

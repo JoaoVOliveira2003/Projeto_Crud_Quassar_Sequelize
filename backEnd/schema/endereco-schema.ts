@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import { conecta } from "../config/conecta";
-import {enderecoInterface} from "../interfaces/enderecoInterface"
+import { enderecoInterface } from "../interfaces/enderecoInterface";
 
 export const EnderecoSchema = conecta.define("Endereco", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -34,7 +34,7 @@ export class EnderecoQuery {
     return await EnderecoSchema.findAll();
   }
 
-  async criarEndereco(endereco : any) {
+  async criarEndereco(endereco: any) {
     try {
       return await EnderecoSchema.create(endereco);
     } catch (error) {
@@ -42,21 +42,22 @@ export class EnderecoQuery {
     }
   }
 
-  async deletarEndereco(id : number) {
+  async deletarEndereco(id: number) {
     try {
-      return EnderecoSchema.destroy({where: { id_usuario: id },});
+      return EnderecoSchema.destroy({ where: { id_usuario: id } });
     } catch (error) {
       throw error;
     }
   }
 
-async atualizarEndereco(id_usuario : number, usuario : enderecoInterface) {
-  try {
-    const [linhasAfetadas] = await EnderecoSchema.update(usuario, { where: { id_usuario: id_usuario }});
-    return linhasAfetadas;
-  } catch (error) {
-    throw error;
+  async atualizarEndereco(id_usuario: number, usuario: enderecoInterface) {
+    try {
+      const [linhasAfetadas] = await EnderecoSchema.update(usuario, {
+        where: { id_usuario: id_usuario },
+      });
+      return linhasAfetadas;
+    } catch (error) {
+      throw error;
+    }
   }
-}
-
 }
