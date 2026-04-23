@@ -34,7 +34,7 @@
           label="Limpar"
           color="primary"
           icon="clear"
-          
+          unelevated
           @click="resetar"
         />
 

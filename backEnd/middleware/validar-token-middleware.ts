@@ -87,7 +87,7 @@ export const validarTokenNaoObrigatorioMiddleware = async (
     );
 
     if (!tipoValido) {
-      return res.redirect("/login");
+      return res.status(401).json({ message: "Não autorizado" });
     }
 
     return next();
