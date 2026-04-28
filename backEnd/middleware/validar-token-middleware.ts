@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from "express";
 import { getVerificarTipoUsuario } from "../services/usuario-get-verificar-tipo-service";
 
 const SEGREDO = "segredoSecreto";
+const EXPIRACAO_TOKEN = "1h";
+const RENOVAR_SE_MENOR_QUE = 5; // segundos
 
 declare global {
   namespace Express {
@@ -10,6 +12,10 @@ declare global {
       usuario?: jwt.JwtPayload;
     }
   }
+}
+
+function extrairToken(req: Request): string | null {
+  return req.cookies?.token ?? null;
 }
 
 const validarTipoUsuario = async (
@@ -28,39 +34,78 @@ const validarTipoUsuario = async (
   }
 };
 
+const renovarTokenSeNecessario = (
+  payload: jwt.JwtPayload,
+  res: Response,
+): void => {
+  const agora = Math.floor(Date.now() / 1000);
+  const deveRenovar =
+    !payload.exp || payload.exp - agora < RENOVAR_SE_MENOR_QUE;
+
+  if (!deveRenovar) return;
+
+  const { iat, exp, ...dadosUsuario } = payload;
+  const novoToken = jwt.sign(dadosUsuario, SEGREDO, {
+    expiresIn: EXPIRACAO_TOKEN,
+  });
+
+  res.cookie("token", novoToken, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: false,
+    maxAge: 60 * 60 * 1000,
+  });
+};
+
+const verificarToken = (token: string): jwt.JwtPayload | null => {
+  try {
+    return jwt.verify(token, SEGREDO, {
+      ignoreExpiration: true,
+    }) as jwt.JwtPayload;
+  } catch {
+    return null;
+  }
+};
+
+const tokenExpirado = (payload: jwt.JwtPayload): boolean => {
+  const agora = Math.floor(Date.now() / 1000);
+  return !!payload.exp && payload.exp <= agora;
+};
+
 export const validarTokenObrigatorioMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const token = extrairToken(req);
 
   if (!token) {
     return res.status(401).json({ mensagem: "Token não informado" });
   }
 
-  try {
-    const payload = jwt.verify(token, SEGREDO, {
-      ignoreExpiration: true,
-    }) as jwt.JwtPayload;
+  const payload = verificarToken(token);
 
-    req.usuario = payload;
-
-    renovarToken(payload, res);
-
-    const tipoValido = await validarTipoUsuario(
-      payload.id_usuario,
-      payload.id_tipo_usuario,
-    );
-
-    if (!tipoValido) {
-      return res.status(401).json({ message: "Não autorizado" });
-    }
-
-    return next();
-  } catch {
-    return res.status(401).json({ mensagem: "Token inválido ou expirado" });
+  if (!payload) {
+    return res.status(401).json({ mensagem: "Token inválido" });
   }
+
+  if (tokenExpirado(payload)) {
+    return res.status(401).json({ mensagem: "Token expirado" });
+  }
+
+  req.usuario = payload;
+
+  const tipoValido = await validarTipoUsuario(
+    payload.id_usuario,
+    payload.id_tipo_usuario,
+  );
+  if (!tipoValido) {
+    return res.status(401).json({ message: "Não autorizado" });
+  }
+
+  renovarTokenSeNecessario(payload, res);
+
+  return next();
 };
 
 export const validarTokenNaoObrigatorioMiddleware = async (
@@ -68,46 +113,25 @@ export const validarTokenNaoObrigatorioMiddleware = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const token = extrairToken(req);
 
   if (!token) return next();
 
-  try {
-    const payload = jwt.verify(token, SEGREDO, {
-      ignoreExpiration: true,
-    }) as jwt.JwtPayload;
+  const payload = verificarToken(token);
 
-    req.usuario = payload;
-
-    renovarToken(payload, res);
-
-    const tipoValido = await validarTipoUsuario(
-      payload.id_usuario,
-      payload.id_tipo_usuario,
-    );
-
-    if (!tipoValido) {
-      return res.status(401).json({ message: "Não autorizado" });
-    }
-
-    return next();
-  } catch {
-    return res.status(401).json({ mensagem: "Token inválido ou expirado" });
-  }
-};
-
-const renovarToken = (payload: jwt.JwtPayload, res: Response) => {
-  const agora = Math.floor(Date.now() / 1000);
-
-  if (payload.exp && payload.exp > agora) {
-    return;
+  if (!payload) {
+    return res.status(401).json({ mensagem: "Token inválido" });
   }
 
-  const { iat, exp, ...dadosUsuario } = payload;
+  req.usuario = payload;
 
-  const novoToken = jwt.sign(dadosUsuario, SEGREDO, {
-    expiresIn: "10s",
-  });
+  const tipoValido = await validarTipoUsuario(
+    payload.id_usuario,
+    payload.id_tipo_usuario,
+  );
+  if (!tipoValido) {
+    return res.status(401).json({ message: "Não autorizado" });
+  }
 
-  res.setHeader("Authorization", `Bearer ${novoToken}`);
+  return next();
 };

@@ -1,7 +1,8 @@
 import { UsuarioQuery } from "../schema/usuario-schema.ts";
 import { EnderecoQuery } from "../schema/endereco-schema.ts";
 import { LoginQuery } from "../schema/login-schema.ts";
-import { validarGenerico } from "./validar-campos-service.ts";
+// import { validarGenerico } from "./validar-campos-service.ts";
+import {validarObjeto} from "../middleware/validacao/validacao-middleware.ts"
 import { DadosUsuario } from "../interfaces/usuarioInterface.ts";
 import CryptoJS from "crypto-js";
 
@@ -11,10 +12,10 @@ export async function salvarUsuario(
   endereco_query: EnderecoQuery = new EnderecoQuery(),
   login_query: LoginQuery = new LoginQuery(),
 ) {
-  const resultado = validarGenerico(usuario);
-  
-  if (resultado !== true) {
-    throw new Error(resultado.join(" | "));
+
+  const erros = validarObjeto(usuario);
+  if (erros.length > 0) {
+    throw new Error(erros.join(" | "));
   }
 
   const usuario_salvo = await usuario_query.criarUsuario(usuario);

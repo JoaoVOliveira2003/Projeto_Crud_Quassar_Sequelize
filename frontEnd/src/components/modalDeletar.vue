@@ -18,17 +18,14 @@
   import { computed } from 'vue'
   import type { DadosUsuario } from '../../interfaces/usuarioInterface'
 
-  //define props -> entrada do de dados
   const props = defineProps<{
     modeloAberto: boolean, usuario?: DadosUsuario | null
   }>()
 
-  // enviar eventos do filho para o pai.
   const emit = defineEmits<{
     'update:modeloAberto': [value: boolean], 'confirmarDelete': []
   }>()
 
-  //sempre que uma outra variavel for atualizad no ref ele vai ser atualizado tambem
   const model = computed({
     get: () => props.modeloAberto, set: (val) => emit('update:modeloAberto', val)
   })

@@ -4,7 +4,17 @@ import { regras } from "./regras-middleware";
 type ListaDeErros = string[];
 type ObjetoGenerico = Record<string, unknown>;
 
-function validarObjeto(
+function buscarRegras(caminho: string[]): Array<(v: unknown) => true | string> | undefined {
+  let atual: unknown = regras;
+  for (const chave of caminho) {
+    if (typeof atual !== "object" || atual === null) return undefined;
+    atual = (atual as ObjetoGenerico)[chave];
+  }
+  if (Array.isArray(atual)) return atual as Array<(v: unknown) => true | string>;
+  return undefined;
+}
+
+export function validarObjeto(
   objetoDesconhecido: unknown,
   caminhoPercorrido: string[] = [],
 ): ListaDeErros {
@@ -31,16 +41,14 @@ function validarObjeto(
       continue;
     }
 
-    const regrasDoCampo = (regras as ObjetoGenerico)[chaveAtual] as
-      | Array<(valorParam: unknown) => true | string>
-      | undefined;
+    const regrasDoCampo = buscarRegras(caminhoCompleto);
 
     if (regrasDoCampo) {
       for (const regraAtual of regrasDoCampo) {
         const resultado = regraAtual(valorDaChave);
         if (resultado !== true) {
           errosEncontrados.push(`${caminhoCompleto.join(".")} → ${resultado}`);
-          break; // para no primeiro erro do campo, igual ao front
+          break;
         }
       }
     }

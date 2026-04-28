@@ -6,7 +6,6 @@ import {
   createWebHistory,
 } from 'vue-router';
 import routes from './routes';
-import { isAuthenticated } from '../../services/Login/authService';
 
 export default defineRouter(function () {
   const createHistory = process.env.SERVER
@@ -19,13 +18,6 @@ export default defineRouter(function () {
     scrollBehavior: () => ({ left: 0, top: 0 }),
     routes,
     history: createHistory(process.env.VUE_ROUTER_BASE),
-  });
-
-  Router.beforeEach((to) => {
-    if (to.meta.requiresAuth && !isAuthenticated()) {
-      return '/login';
-    }
-    return true;
   });
 
   return Router;

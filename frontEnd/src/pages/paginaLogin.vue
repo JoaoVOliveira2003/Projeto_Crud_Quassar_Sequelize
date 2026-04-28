@@ -46,16 +46,8 @@ async function realizarLogin() {
     }
 
     try {
-        const res = await login(dadosLogin);
-        const token = res.token;
-
-        if (!token) {
-            alert('Senha ou email incorretos');
-            return;
-        }
-
-        localStorage.setItem('token', token);
-
+        const dadoTeste = await login(dadosLogin);  
+        console.log('indo pra home ' + dadoTeste);
         router.push('/');
     }
     catch (error) {

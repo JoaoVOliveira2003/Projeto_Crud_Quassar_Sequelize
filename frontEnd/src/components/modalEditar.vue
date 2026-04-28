@@ -7,58 +7,58 @@
                 <q-form ref="formEditarRef" greedy>
 
                     <q-input filled v-model="formularioLocal.nome" label="Nome" class="bordered q-mb-sm" clearable
-                        hide-bottom-space lazy-rules :rules="regras.nome" />
+                        hide-bottom-space lazy-rules :rules="regras.usuario.nome" />
 
                     <q-input filled type="date" v-model="formularioLocal.dataDeNascimento" label="Data de Nascimento"
                         class="bordered q-mb-sm" clearable hide-bottom-space lazy-rules
-                        :rules="regras.dataDeNascimento" />
+                        :rules="regras.usuario.dataDeNascimento" />
 
                     <div class="row q-gutter-sm">
                         <div class="col">
                             <q-input filled type="number" v-model.number="formularioLocal.peso" label="Peso (kg)"
-                                class="bordered q-mb-sm" clearable hide-bottom-space lazy-rules :rules="regras.peso" />
+                                class="bordered q-mb-sm" clearable hide-bottom-space lazy-rules :rules="regras.usuario.peso" />
                         </div>
 
                         <div class="col">
                             <q-input filled type="number" step="0.01" v-model.number="formularioLocal.altura"
                                 label="Altura (m)" class="bordered q-mb-sm" clearable hide-bottom-space lazy-rules
-                                :rules="regras.altura" />
+                                :rules="regras.usuario.altura" />
                         </div>
                     </div>
 
                     <div class="row q-gutter-sm">
                         <div class="col">
                             <q-input filled v-model="formularioLocal.rua" label="Rua" class="bordered q-mb-sm" clearable
-                                hide-bottom-space lazy-rules :rules="regras.rua" />
+                                hide-bottom-space lazy-rules :rules="regras.endereco.rua" />
                         </div>
 
                         <div class="col">
                             <q-input filled type="number" v-model.number="formularioLocal.numero" label="Número"
                                 class="bordered q-mb-sm" clearable hide-bottom-space lazy-rules
-                                :rules="regras.numero" />
+                                :rules="regras.endereco.numero" />
                         </div>
                     </div>
 
                     <div class="row q-gutter-sm">
                         <div class="col">
                             <selectCidade class="q-mb-sm" v-model="formularioLocal.cidadeSelecionada"
-                                :rules="regras.cidadeSelecionada" />
+                                :rules="regras.endereco.cidadeSelecionada" />
                         </div>
                         <div class="col">
                             <selectTipoUsuario class="q-mb-sm" v-model="formularioLocal.id_tipo_usuario"
-                                :rules="regras.id_tipo_usuario" />
+                                :rules="regras.usuario.id_tipo_usuario" />
                         </div>
                     </div>
 
                     <div class="row q-gutter-sm">
                         <div class="col">
                             <q-input filled v-model="formularioLocal.email" label="Email" class="bordered q-mb-sm"
-                                clearable hide-bottom-space lazy-rules :rules="regras.email" />
+                                clearable hide-bottom-space lazy-rules :rules="regras.login.email" />
                         </div>
 
                         <div class="col">
                             <InputSenha v-model="formularioLocal.novaSenha" label="Nova senha (opcional)"
-                                :rules="regras.novaSenha" :disable="valorId_tipo_usuario !== 1" />
+                                :rules="regras.usuario.novaSenha" :disable="valorId_tipo_usuario !== 1" />
                         </div>
                     </div>
 
@@ -81,12 +81,9 @@ import type { DadosUsuario } from '../../interfaces/usuarioInterface'
 import { regras } from 'src/utils/validacao/regras'
 import { validarObjeto } from 'src/utils/validacao/validacao'
 import InputSenha from './inputSenha.vue'
+import { listarDadosUsuarioLogado } from '../../services/UsuarioLogado/listarDadosUsuarioLogado'
 
-import { jwtDecode } from 'jwt-decode';
-import type { TokenPayload } from '../../interfaces/TokenPayload';
-const token = localStorage.getItem('token');
-const valorId_tipo_usuario = token ? jwtDecode<TokenPayload>(token).id_tipo_usuario : null;
-
+const valorId_tipo_usuario = ref<number | null>(null);
 
 const props = defineProps<{
     modeloAberto: boolean,
@@ -97,6 +94,21 @@ const emit = defineEmits<{
     'update:modeloAberto': [value: boolean],
     'salvar': [dados: DadosUsuario]
 }>()
+
+watch(() => props.modeloAberto, (abriu) => {
+    if (abriu) {
+        init() 
+        if (props.usuario) {
+            preencherFormulario(props.usuario)
+        }
+    }
+})
+
+
+async function init() {
+    const usuario = await listarDadosUsuarioLogado();
+    valorId_tipo_usuario.value = usuario.data.id_tipo_usuario;
+}
 
 const dialogVisible = computed({
     get: () => props.modeloAberto,

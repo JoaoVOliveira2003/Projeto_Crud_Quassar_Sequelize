@@ -4,7 +4,7 @@ import api from '../../src/utils/apiConector'
 
 export async function login(usuario: loginInterface) {
   try {
-    const res = await api.post('/login/criarLogin', { usuario });
+    const res = await api.post('/login/realizarLogin', { usuario });
     return res.data;
   } catch (error) {
     console.error('Erro ao realizar login:', error);

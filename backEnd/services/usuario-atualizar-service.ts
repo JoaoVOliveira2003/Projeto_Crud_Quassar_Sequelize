@@ -1,7 +1,8 @@
 import { UsuarioQuery } from "../schema/usuario-schema";
 import { EnderecoQuery } from "../schema/endereco-schema";
 import { LoginQuery } from "../schema/login-schema";
-import { validarGenerico } from "./validar-campos-service";
+// import { validarGenerico } from "./validar-campos-service";
+import { validarObjeto } from "../middleware/validacao/validacao-middleware.ts";
 import { DadosUsuario } from "../interfaces/usuarioInterface";
 import CryptoJS from "crypto-js";
 
@@ -12,10 +13,9 @@ export async function atualizarUsuarioService(
   endereco_query: EnderecoQuery = new EnderecoQuery(),
   login_query: LoginQuery = new LoginQuery(),
 ) {
-  const resultado = validarGenerico(usuario);
-
-  if (resultado !== true) {
-    throw new Error(resultado.join(", "));
+  const erros = validarObjeto(usuario);
+  if (erros.length > 0) {
+    throw new Error(erros.join(" | "));
   }
 
   if (usuario.login.senha) {

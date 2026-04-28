@@ -2,32 +2,35 @@
   <q-form ref="formRef" greedy @submit.prevent="createUsuarioTodosDados">
 
     <q-input filled v-model="formularioPrincipal.nome" label="Nome" class="bordered q-mb-sm"
-      placeholder="Digite seu nome" clearable hide-bottom-space lazy-rules :rules="regras.nome" />
+      placeholder="Digite seu nome" clearable hide-bottom-space lazy-rules 
+      :rules="regras.usuario.nome"
+      />
+
 
     <q-input lazy-rules filled v-model="formularioPrincipal.dataDeNascimento" label="Data de Nascimento" type="date"
-      class="bordered q-mb-sm" clearable hide-bottom-space :rules="regras.dataDeNascimento" />
+      class="bordered q-mb-sm" clearable hide-bottom-space :rules="regras.usuario.dataDeNascimento" />
 
     <div class="row q-gutter-sm">
       <div class="col">
         <q-input lazy-rules filled v-model.number="formularioPrincipal.peso" label="Peso (kg)" type="number"
-          class="bordered q-mb-sm" clearable hide-bottom-space @keypress="limparCampoPeso" :rules="regras.peso" />
+          class="bordered q-mb-sm" clearable hide-bottom-space @keypress="limparCampoPeso" :rules="regras.usuario.peso" />
       </div>
 
       <div class="col">
         <q-input lazy-rules filled v-model.number="formularioPrincipal.altura" label="Altura (m)" type="number"
-          step="0.01" class="bordered q-mb-sm" clearable hide-bottom-space :rules="regras.altura" />
+          step="0.01" class="bordered q-mb-sm" clearable hide-bottom-space :rules="regras.usuario.altura" />
       </div>
     </div>
 
     <div class="row q-gutter-sm">
       <div class="col">
         <q-input lazy-rules filled v-model="formularioPrincipal.rua" label="Rua" placeholder="Digite sua rua" clearable
-          hide-bottom-space :rules="regras.rua" />
+          hide-bottom-space :rules="regras.endereco.rua" />
       </div>
 
       <div class="col">
         <q-input lazy-rules filled v-model.number="formularioPrincipal.numero" label="Número" type="number" clearable
-          hide-bottom-space :rules="regras.numero" />
+          hide-bottom-space :rules="regras.endereco.numero" />
       </div>
     </div>
 
@@ -35,23 +38,22 @@
 
     <div class="row q-gutter-sm">
       <div class="col">
-       <selectCidade lazy-rules v-model="formularioPrincipal.cidadeSelecionada" :rules="regras.cidadeSelecionada" />
+       <selectCidade lazy-rules v-model="formularioPrincipal.cidadeSelecionada" :rules="regras.endereco.cidadeSelecionada" />
       </div>
       <div class="col">
-        <selectTipoUsuario lazy-rules v-model="formularioPrincipal.tipoUsuario" :rules="regras.tipoUsuario"/>
+        <selectTipoUsuario lazy-rules v-model="formularioPrincipal.tipoUsuario" :rules="regras.usuario.tipoUsuario"/>
       </div> 
     </div>
  
     <div class="row q-gutter-sm">
       <div class="col">
         <q-input lazy-rules filled v-model="formularioPrincipal.email" label="Email" placeholder="Digite sua email"
-          clearable hide-bottom-space :rules="regras.email" autocomplete="email"
+          clearable hide-bottom-space :rules="regras.login.email" autocomplete="email"
  />
       </div>
 
       <div class="col">
-        <!-- <q-input lazy-rules filled v-model="formularioPrincipal.senha" label="Senha" type="password" clearable hide-bottom-space :rules="regras.senha" /> -->
-      <InputSenha   v-model="formularioPrincipal.senha" label="Senha" :rules="regras.senha"/>                      
+      <InputSenha  v-model="formularioPrincipal.senha" label="Senha" :rules="regras.login.senha"/>                      
 
       </div>
     </div>
@@ -70,15 +72,13 @@ import selectCidade from '../components/selectCidade.vue';
 import selectTipoUsuario from '../components/selectTipoUsuario.vue';
 import { criarUsuario } from '../../services/Usuarios/criarUsuarioService';
 import { validarObjeto } from 'src/utils/validacao/validacao'
-import { ref, reactive } from 'vue';
+import { ref, reactive, } from 'vue';
 import type { DadosUsuario } from '../../interfaces/usuarioInterface'
 import InputSenha from './inputSenha.vue'
 
-
-
-
 const formRef = ref();
 const emit = defineEmits(['usuarioCriado']);
+
 
 defineProps({
   botaoVoltar: Boolean
@@ -138,8 +138,9 @@ async function createUsuarioTodosDados() {
 
   try {
     const res = await criarUsuario(usuario);
-    // await atualizarFormulario();
+    
     emit('usuarioCriado', res);
+
     alert('Novo usuário criado: ' + (res.nome || formularioPrincipal.nome));
     limparFormularioPrincipal();
   } catch (error) {

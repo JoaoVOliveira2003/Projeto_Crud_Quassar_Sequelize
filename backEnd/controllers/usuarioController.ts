@@ -5,6 +5,7 @@ import { deletarUsuarioService } from "../services/usuario-deletar-service";
 import { atualizarUsuarioService } from "../services/usuario-atualizar-service";
 import { getTodosUsuariosFiltrados } from "../services/usuario-get-filtrado-service";
 import { getVerificarTipoUsuario } from "../services/usuario-get-verificar-tipo-service";
+import jwt from "jsonwebtoken";
 
 export namespace usuarioController {
   export async function getUsuarios(req: Request, res: Response) {
@@ -20,8 +21,19 @@ export namespace usuarioController {
   export async function gravarUsuario(req: Request, res: Response) {
     try {
       let usuario = req.body.usuario;
+      const token = req.cookies?.token;
 
-      const id_usuario = req.usuario?.id_usuario ?? 0;
+      let id_usuario = 0;
+      if (token) {
+        try {
+          const decoded = jwt.verify(token, "segredoSecreto") as {
+            id_usuario: number;
+          };
+          id_usuario = decoded.id_usuario ?? 0;
+        } catch {
+          id_usuario = 0;
+        }
+      }
 
       usuario = { ...usuario, criadoPor: id_usuario };
 
@@ -33,6 +45,7 @@ export namespace usuarioController {
         erro: "Erro ao criar usuário com endereço",
         detalhes: error.message,
       });
+
     }
   }
 
@@ -56,7 +69,6 @@ export namespace usuarioController {
       const usuario = req.body.usuario;
 
       const retorno = await atualizarUsuarioService(id, usuario);
-      console.log(retorno);
       res.json(retorno);
     } catch (error: any) {
       console.error(error);
@@ -97,4 +109,11 @@ export namespace usuarioController {
       });
     }
   }
+
+export async function perfilCookie(req: Request, res: Response) {
+  const id = req.usuario?.id_usuario;
+  const tipo = req.usuario?.id_tipo_usuario;
+
+  res.json({ id, tipo });
+}  
 }

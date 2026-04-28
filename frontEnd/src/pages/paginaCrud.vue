@@ -44,11 +44,9 @@
 <script setup lang="ts">
 import type { QTableColumn } from 'quasar';
 import type { DadosUsuario } from '../../interfaces/usuarioInterface';
-import type { TokenPayload } from '../../interfaces/TokenPayload'
 import type { formularioPesquisaInterface } from '../../interfaces/formularioPesquisaInterface'
 
-import {ref,onMounted, onUnmounted} from 'vue';
-import {jwtDecode } from 'jwt-decode';
+import { ref, onMounted, onUnmounted } from 'vue';
 import ModalDeletar from '../components/modalDeletar.vue';
 import ModalEditar from '../components/modalEditar.vue';
 import formularioDadosUsuario from '../components/formularioDadosUsuario.vue';
@@ -59,6 +57,10 @@ import { carregarUsuarios } from '../../services/Usuarios/listarUsuarioService';
 import { atualizarUsuarioService } from '../../services/Usuarios/atualizarUsuarioService';
 import { deletarUsuario } from '../../services/Usuarios/deletarUsuarioService';
 import { buscarUsuariosFiltrados } from '../../services/Usuarios/listarUsuarioServiceFiltrados';
+import { listarDadosUsuarioLogado } from '../../services/UsuarioLogado/listarDadosUsuarioLogado'
+import { perfilCookie } from '../../services/Usuarios/perfilCookieService'
+
+import axios from "axios";
 
 const usuarios = ref<DadosUsuario[]>([]);
 const usuarioParaEditar = ref<DadosUsuario | null>(null);
@@ -78,26 +80,40 @@ const valorId_tipo_usuario = ref<number | null>(null);
 const valorId = ref<number | null>(null);
 const tempoRestante = ref("");
 
-function verTempoToken() {
-  const token = localStorage.getItem('token');
-  if (!token) return;
-
-  try {
-    const decoded = jwtDecode<TokenPayload>(token);
-    valorId.value = decoded.id_usuario;
-    valorId_tipo_usuario.value = decoded.id_tipo_usuario;
-    const agora = Math.floor(Date.now() / 1000);
-    tempoRestante.value = (decoded.exp - agora) + " segundos";
-  } catch {
-    console.log('Token inválido');
-  }
-}
 let intervalo: ReturnType<typeof setInterval>;
 
+async function verTempoToken() {
+  try {
+    const token = await listarDadosUsuarioLogado();
+
+    if (!token) return;
+
+    valorId.value = token.data.id_usuario;
+    valorId_tipo_usuario.value = token.data.id_tipo_usuario;
+    tempoRestante.value = token.data.tempo_restante + " segundos";
+
+  } catch {
+    clearInterval(intervalo);
+  }
+}
+
 onMounted(async () => {
-  usuarios.value = await carregarUsuarios();
-  verTempoToken();
-  intervalo = setInterval(verTempoToken, 1000);
+  try {
+    usuarios.value = await carregarUsuarios();
+
+    const token = await listarDadosUsuarioLogado();
+
+    localStorage.setItem('dados_usuario', JSON.stringify({
+      id_usuario: token.data.id_usuario,
+      id_tipo_usuario: token.data.id_tipo_usuario
+    }));
+
+    await verTempoToken();
+    intervalo = setInterval(verTempoToken, 1000);
+
+  } catch (error) {
+    console.log('Usuário não autenticado' + error);
+  }
 });
 
 onUnmounted(() => {
@@ -105,30 +121,11 @@ onUnmounted(() => {
 });
 
 
-function testeToken() {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    console.log("Token não encontrado");
-    return;
-  }
-
-  const decoded = jwtDecode<TokenPayload>(token);
-
-  console.log("Token decodificado:", decoded);
-
-  valorId.value = decoded.id_usuario;
-  valorId_tipo_usuario.value = decoded.id_tipo_usuario;
-
-  const segundos = decoded.exp - decoded.iat;
-
-  console.log("Duração do token:", segundos, "segundos");
-
-  console.log("Enviar no header assim:");
-  console.log({
-    Authorization: `Bearer ${token}`
-  });
+async function testeToken() {
+  const dadosUsuario = await perfilCookie();
+  console.log(dadosUsuario); // objeto completo
 }
+
 
 async function atualizarFormulario() {
   usuarios.value = await carregarUsuarios();
@@ -153,19 +150,33 @@ async function atualizarUsuario(dados: DadosUsuario) {
       ...(dados.login?.senha && { senha: dados.login.senha })
     }
   };
-  console.log('1')
+
   try {
-    console.log('2')
     await atualizarUsuarioService(dadosCorretos);
-    console.log('3')
     modalAberto.value = false;
-    await atualizarFormulario();
-    alert('Usuário atualizado com sucesso');
+
+    try {
+      await atualizarFormulario();
+    } catch (error) {
+      if (
+        axios.isAxiosError(error) &&
+        error.response?.status === 401 &&
+        error.response?.data?.message === "Não autorizado"
+      ) {
+        console.warn("401 ignorado ao recarregar lista.");
+      } else {
+        throw error;
+      }
+    }
+
+    alert("Usuário atualizado com sucesso");
     usuarioParaEditar.value = null;
+
   } catch (error) {
     console.error(error);
-    alert('Erro ao atualizar usuário');
+    alert("Erro ao atualizar usuário");
   }
+
 }
 
 async function confirmarDelete() {

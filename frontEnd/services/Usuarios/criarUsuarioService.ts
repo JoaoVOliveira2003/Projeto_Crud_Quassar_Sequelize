@@ -1,4 +1,3 @@
-// import axios from 'axios';
 import type { DadosUsuario } from '../../interfaces/usuarioInterface';
 import api from '../../src/utils/apiConector';
 
