@@ -4,11 +4,7 @@ import { conecta } from "../config/conecta";
 export const TipoUsuarioSchema = conecta.define(
   "Tipo_usuario",
   {
-    id_tipo_usuario: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
+    id_tipo_usuario: {type: DataTypes.INTEGER,primaryKey: true,autoIncrement: true,},
     desc_tipo_usuario: { type: DataTypes.STRING(), allowNull: false },
   },
   {

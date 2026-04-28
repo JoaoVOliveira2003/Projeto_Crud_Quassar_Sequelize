@@ -4,7 +4,6 @@
             <img style="" src="../assets/imgs/shallows.png" alt="">
         </div>
 
-
         <div class="col-6 flex flex-center">
             <div style="width: 300px;">
                 <h4>Login</h4>
@@ -46,7 +45,7 @@ async function realizarLogin() {
     }
 
     try {
-        const dadoTeste = await login(dadosLogin);  
+        const dadoTeste = await login(dadosLogin);
         console.log('indo pra home ' + dadoTeste);
         router.push('/');
     }

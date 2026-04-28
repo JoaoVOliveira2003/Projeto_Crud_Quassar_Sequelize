@@ -4,6 +4,6 @@ type RegrasObjeto = Record<string, FuncaoRegra[]>;
 
 export const regrasEstado: RegrasObjeto = {
   nome: [
-    (valor) => !!valor || 'Nome cidade obrigatório',
+    (valor) => !!valor || 'Nome do estado é obrigatório',
   ]
 };

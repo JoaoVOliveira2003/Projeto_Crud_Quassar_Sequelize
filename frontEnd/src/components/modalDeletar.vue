@@ -15,22 +15,22 @@
 </template>
 
 <script setup lang="ts">
-  import { computed } from 'vue'
-  import type { DadosUsuario } from '../../interfaces/usuarioInterface'
+import { computed } from 'vue'
+import type { DadosUsuario } from '../../interfaces/usuarioInterface'
 
-  const props = defineProps<{
-    modeloAberto: boolean, usuario?: DadosUsuario | null
-  }>()
+const props = defineProps<{
+  modeloAberto: boolean, usuario?: DadosUsuario | null
+}>()
 
-  const emit = defineEmits<{
-    'update:modeloAberto': [value: boolean], 'confirmarDelete': []
-  }>()
+const emit = defineEmits<{
+  'update:modeloAberto': [value: boolean], 'confirmarDelete': []
+}>()
 
-  const model = computed({
-    get: () => props.modeloAberto, set: (val) => emit('update:modeloAberto', val)
-  })
+const model = computed({
+  get: () => props.modeloAberto, set: (val) => emit('update:modeloAberto', val)
+})
 
-  function confirmarDelete() {
-    emit('confirmarDelete')
-  }
+function confirmarDelete() {
+  emit('confirmarDelete')
+}
 </script>

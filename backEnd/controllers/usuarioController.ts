@@ -45,7 +45,6 @@ export namespace usuarioController {
         erro: "Erro ao criar usuário com endereço",
         detalhes: error.message,
       });
-
     }
   }
 
@@ -97,10 +96,7 @@ export namespace usuarioController {
     try {
       let id_usuario = req.body.id_usuario;
       let id_tipo_usuario = req.body.id_tipo_usuario;
-      const retorno = await getVerificarTipoUsuario(
-        id_usuario,
-        id_tipo_usuario,
-      );
+      const retorno = await getVerificarTipoUsuario(id_usuario,id_tipo_usuario,);
       res.json(retorno);
     } catch (error: any) {
       res.status(500).json({
@@ -110,10 +106,9 @@ export namespace usuarioController {
     }
   }
 
-export async function perfilCookie(req: Request, res: Response) {
-  const id = req.usuario?.id_usuario;
-  const tipo = req.usuario?.id_tipo_usuario;
-
-  res.json({ id, tipo });
-}  
+  export async function perfilCookie(req: Request, res: Response) {
+    const id = req.usuario?.id_usuario;
+    const tipo = req.usuario?.id_tipo_usuario;
+    res.json({ id, tipo });
+  }
 }

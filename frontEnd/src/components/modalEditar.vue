@@ -16,7 +16,8 @@
                     <div class="row q-gutter-sm">
                         <div class="col">
                             <q-input filled type="number" v-model.number="formularioLocal.peso" label="Peso (kg)"
-                                class="bordered q-mb-sm" clearable hide-bottom-space lazy-rules :rules="regras.usuario.peso" />
+                                class="bordered q-mb-sm" clearable hide-bottom-space lazy-rules
+                                :rules="regras.usuario.peso" />
                         </div>
 
                         <div class="col">
@@ -97,7 +98,7 @@ const emit = defineEmits<{
 
 watch(() => props.modeloAberto, (abriu) => {
     if (abriu) {
-        init() 
+        init()
         if (props.usuario) {
             preencherFormulario(props.usuario)
         }

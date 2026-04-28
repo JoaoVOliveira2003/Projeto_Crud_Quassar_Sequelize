@@ -1,11 +1,7 @@
 <template>
   <q-form ref="formRef" greedy @submit.prevent="createUsuarioTodosDados">
 
-    <q-input filled v-model="formularioPrincipal.nome" label="Nome" class="bordered q-mb-sm"
-      placeholder="Digite seu nome" clearable hide-bottom-space lazy-rules 
-      :rules="regras.usuario.nome"
-      />
-
+    <q-input filled v-model="formularioPrincipal.nome" label="Nome" class="bordered q-mb-sm" placeholder="Digite seu nome" clearable hide-bottom-space lazy-rules :rules="regras.usuario.nome"/>
 
     <q-input lazy-rules filled v-model="formularioPrincipal.dataDeNascimento" label="Data de Nascimento" type="date"
       class="bordered q-mb-sm" clearable hide-bottom-space :rules="regras.usuario.dataDeNascimento" />
@@ -33,9 +29,7 @@
           hide-bottom-space :rules="regras.endereco.numero" />
       </div>
     </div>
-
     <br>
-
     <div class="row q-gutter-sm">
       <div class="col">
        <selectCidade lazy-rules v-model="formularioPrincipal.cidadeSelecionada" :rules="regras.endereco.cidadeSelecionada" />
@@ -48,8 +42,7 @@
     <div class="row q-gutter-sm">
       <div class="col">
         <q-input lazy-rules filled v-model="formularioPrincipal.email" label="Email" placeholder="Digite sua email"
-          clearable hide-bottom-space :rules="regras.login.email" autocomplete="email"
- />
+          clearable hide-bottom-space :rules="regras.login.email" autocomplete="email" />
       </div>
 
       <div class="col">
@@ -78,7 +71,6 @@ import InputSenha from './inputSenha.vue'
 
 const formRef = ref();
 const emit = defineEmits(['usuarioCriado']);
-
 
 defineProps({
   botaoVoltar: Boolean
@@ -160,6 +152,4 @@ function limparFormularioPrincipal() {
 function limparCampoPeso(event: KeyboardEvent) {
   if (event.key === ',' || event.key === '.' || !/[0-9]/.test(event.key)) event.preventDefault();
 }
-
-
 </script>

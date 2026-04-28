@@ -12,13 +12,15 @@ export namespace loginController {
 
     // return res.json({ token });
 
-    return res.cookie('token',usuario,{
-      httpOnly:true,
-      // secure: true,
-      // sameSite:'none',     
-      secure: false,        
-      sameSite: 'lax',
-      maxAge:60 * 60 * 1000
-    }).sendStatus(200);
+    return res
+      .cookie("token", usuario, {
+        httpOnly: true,
+        // secure: true,
+        // sameSite:'none',
+        secure: false,
+        sameSite: "lax",
+        maxAge: 60 * 60 * 1000,
+      })
+      .sendStatus(200);
   }
 }

@@ -13,7 +13,7 @@ import api from '../utils/apiConector'; // ou onde estiver
 function logout() {
     localStorage.removeItem('token');
     delete axios.defaults.headers.common['Authorization'];
-    delete api.defaults.headers.common['Authorization']; 
+    delete api.defaults.headers.common['Authorization'];
     router.push('/login');
 }
 </script>

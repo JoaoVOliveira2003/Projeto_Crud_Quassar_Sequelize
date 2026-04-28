@@ -3,9 +3,7 @@ import api from 'src/utils/apiConector';
 
 export async function buscarUsuariosFiltrados(filtros: formularioPesquisaInterface) {
   try {
-    const res = await api.get('/usuario/filtroUsuarios', {
-      params: filtros,
-    });
+    const res = await api.get('/usuario/filtroUsuarios', {params: filtros,});
     return res.data;
   } catch (error) {
     console.error(error);

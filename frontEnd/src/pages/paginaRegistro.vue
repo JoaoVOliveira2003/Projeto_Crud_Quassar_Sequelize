@@ -4,7 +4,6 @@
     <h4 class="flex flex-center q-my-none">Cadastro de usuario</h4>
     <hr/>
       <formularioDadosUsuario :botaoVoltar="true" @usuarioCriado="passarTela()"  />
-    
     </q-card>
   </div>
 </template>
