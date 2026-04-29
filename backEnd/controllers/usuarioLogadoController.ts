@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getDadosUsuarioLogado } from "../services/usuario-logado-get";
+import { getDadosUsuarioLogado } from "../services/usuario-logado-get-service";
 
 export namespace usuarioLogadoController {
   export async function getUsuarioLogado(req: Request, res: Response) {

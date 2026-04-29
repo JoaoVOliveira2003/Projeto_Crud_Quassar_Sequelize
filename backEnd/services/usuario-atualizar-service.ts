@@ -19,10 +19,7 @@ export async function atualizarUsuarioService(
   }
 
   if (usuario.login.senha) {
-    usuario.login.senha = CryptoJS.HmacSHA256(
-      usuario.login.senha,
-      process.env.CRYPTO_SECRET!,
-    ).toString();
+    usuario.login.senha = CryptoJS.HmacSHA256(usuario.login.senha,process.env.CRYPTO_SECRET!,).toString();
   }
 
   await endereco_query.atualizarEndereco(id, usuario.endereco);

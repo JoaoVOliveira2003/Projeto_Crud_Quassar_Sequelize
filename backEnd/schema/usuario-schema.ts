@@ -139,9 +139,7 @@ export class UsuarioQuery {
             model: TipoUsuarioSchema,
             as: "tipoUsuario",
             required: !!filtros.tipoUsuario,
-            where: filtros.tipoUsuario
-              ? { id_tipo_usuario: filtros.tipoUsuario }
-              : undefined,
+            where: filtros.tipoUsuario ? { id_tipo_usuario: filtros.tipoUsuario } : undefined,
           },
         ],
         order: [["id", "desc"]],
